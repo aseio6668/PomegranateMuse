@@ -1,0 +1,33 @@
+{
+    "name": "python_language",
+    "version": "1.0.0",
+    "description": "Python language support plugin with AST parsing and analysis",
+    "author": "PomegranteMuse Team",
+    "plugin_type": "language",
+    "entry_point": "python_plugin",
+    "dependencies": [],
+    "capabilities": [
+        "parse_code",
+        "validate_syntax", 
+        "extract_dependencies",
+        "complexity_analysis",
+        "ast_generation"
+    ],
+    "min_pomuse_version": "1.0.0",
+    "tags": ["python", "language", "ast", "builtin"],
+    "config_schema": {
+        "type": "object",
+        "properties": {
+            "max_complexity": {
+                "type": "integer",
+                "default": 10,
+                "description": "Maximum allowed complexity"
+            },
+            "strict_mode": {
+                "type": "boolean", 
+                "default": false,
+                "description": "Enable strict syntax checking"
+            }
+        }
+    }
+}

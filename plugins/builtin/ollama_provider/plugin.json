@@ -1,0 +1,48 @@
+{
+    "name": "ollama_provider",
+    "version": "1.0.0",
+    "description": "Ollama ML provider plugin for local model inference",
+    "author": "PomegranteMuse Team",
+    "plugin_type": "ml_provider",
+    "entry_point": "ollama_plugin",
+    "dependencies": [],
+    "capabilities": [
+        "code_generation",
+        "code_analysis", 
+        "code_completion",
+        "explanation",
+        "translation"
+    ],
+    "min_pomuse_version": "1.0.0",
+    "tags": ["ollama", "ml", "local", "builtin"],
+    "config_schema": {
+        "type": "object",
+        "properties": {
+            "base_url": {
+                "type": "string",
+                "default": "http://localhost:11434",
+                "description": "Ollama server base URL"
+            },
+            "model": {
+                "type": "string",
+                "default": "codellama",
+                "description": "Default model to use"
+            },
+            "timeout": {
+                "type": "integer",
+                "default": 120,
+                "description": "Request timeout in seconds"
+            },
+            "max_tokens": {
+                "type": "integer",
+                "default": 4000,
+                "description": "Maximum tokens per request"
+            },
+            "temperature": {
+                "type": "number",
+                "default": 0.1,
+                "description": "Sampling temperature"
+            }
+        }
+    }
+}

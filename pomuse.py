@@ -19,6 +19,20 @@ from datetime import datetime
 # Import our custom modules
 from ollama_client import OllamaClient, CodeAnalysisPrompts
 from build_tester import BuildTestingIntegration
+from cicd import CICDIntegration, setup_cicd_for_project, configure_cicd_interactive
+from benchmarking import BenchmarkIntegration, run_benchmark_interactive
+from security import SecurityIntegration, run_security_scan_interactive
+from cost_analysis import CostIntegration, run_cost_analysis_interactive
+from collaboration import TeamIntegration, run_team_management_interactive
+from enterprise import EnterpriseManager, run_enterprise_setup_interactive
+from universal_testing import (
+    UniversalBuilder, TestConfiguration, TestOrchestrator, 
+    BuildMatrix, generate_build_matrix, run_comprehensive_tests
+)
+from migration_strategy import (
+    MigrationPlanner, MigrationStrategy, create_migration_plan,
+    ProgressTracker, StatusDashboard, LegacyCodeAnalyzer
+)
 
 # Version info
 __version__ = "0.1.0"
@@ -620,6 +634,8 @@ class InteractiveCLI:
         self.ollama_provider = EnhancedOllamaProvider()
         self.pomegranate_generator = PomegranateGenerator(self.ollama_provider)
         self.build_tester = BuildTestingIntegration()
+        self.cicd_integration = None  # Will be initialized with working directory
+        self.enterprise_manager = None  # Will be initialized with working directory
     
     async def start_interactive_session(self, working_dir: Path):
         """Start interactive session"""
@@ -629,6 +645,35 @@ class InteractiveCLI:
         # Initialize project
         self.project_state = ProjectState(working_dir)
         self.project_state.initialize()
+        
+        # Initialize CI/CD integration
+        self.cicd_integration = CICDIntegration(str(working_dir))
+        
+        # Initialize benchmarking integration
+        self.benchmark_integration = BenchmarkIntegration(str(working_dir))
+        
+        # Initialize security integration
+        self.security_integration = SecurityIntegration(str(working_dir))
+        
+        # Initialize cost analysis integration
+        self.cost_integration = CostIntegration(str(working_dir))
+        
+        # Initialize team collaboration integration
+        self.team_integration = TeamIntegration(str(working_dir))
+        
+        # Initialize enterprise integration
+        self.enterprise_manager = EnterpriseManager.load_config(str(working_dir / ".pomuse"))
+        
+        # Initialize universal testing integration
+        self.universal_builder = UniversalBuilder(str(working_dir / ".pomuse"))
+        self.test_orchestrator = TestOrchestrator(str(working_dir / ".pomuse"))
+        self.build_matrix = BuildMatrix(str(working_dir / ".pomuse"))
+        
+        # Initialize migration strategy integration
+        self.migration_planner = MigrationPlanner(str(working_dir / ".pomuse"))
+        self.progress_tracker = ProgressTracker(str(working_dir / ".pomuse"))
+        self.status_dashboard = StatusDashboard(self.progress_tracker)
+        self.legacy_analyzer = LegacyCodeAnalyzer()
         
         # Initialize Ollama connection
         print("Initializing ML provider...")
@@ -663,6 +708,22 @@ class InteractiveCLI:
                     self._handle_status_command()
                 elif command.startswith("build"):
                     await self._handle_build_command(command)
+                elif command.startswith("cicd"):
+                    await self._handle_cicd_command(command)
+                elif command.startswith("benchmark"):
+                    await self._handle_benchmark_command(command)
+                elif command.startswith("security"):
+                    await self._handle_security_command(command)
+                elif command.startswith("cost"):
+                    await self._handle_cost_command(command)
+                elif command.startswith("team"):
+                    await self._handle_team_command(command)
+                elif command.startswith("enterprise"):
+                    await self._handle_enterprise_command(command)
+                elif command.startswith("test"):
+                    await self._handle_test_command(command)
+                elif command.startswith("migrate"):
+                    await self._handle_migrate_command(command)
                 else:
                     print(f"Unknown command: {command}. Type 'help' for available commands.")
             
@@ -681,12 +742,67 @@ Available commands:
   continue          - Continue from last session using .pomuse state
   status            - Show current project status
   build test [file]  - Test build a specific generated file
+  cicd setup         - Set up CI/CD pipelines interactively
+  cicd generate      - Generate CI/CD pipelines with auto-detection
+  cicd update        - Update existing CI/CD configuration
+  cicd providers     - List supported CI/CD providers and features
+  cicd languages     - List supported programming languages
+  benchmark run      - Run interactive benchmarking session
+  benchmark suite    - Run a specific benchmark suite
+  benchmark file     - Benchmark a specific file
+  benchmark report   - Generate performance report
+  security scan      - Run comprehensive security analysis
+  security quick     - Run quick security scan (static only)
+  security gate      - Run security gate checks
+  security dashboard - View security dashboard
+  security policy    - Configure security policy
+  cost analyze       - Run comprehensive cost analysis
+  cost estimate      - Quick cost estimation
+  cost dashboard     - View cost dashboard and trends
+  cost budget        - Set up and manage cost budgets
+  cost optimize      - Get optimization recommendations
+  team dashboard     - View team collaboration dashboard
+  team members       - Manage team members and roles
+  team reviews       - Manage code review process
+  team settings      - Configure team settings and workflows
+  team activity      - View team activity and reports
+  enterprise setup   - Configure enterprise integrations
+  enterprise status  - View integration status
+  enterprise auth    - Test authentication
+  enterprise project - Create migration project with integrations
+  test universal     - Run universal build testing
+  test matrix        - Execute build matrix testing
+  test coverage      - Run comprehensive coverage analysis
+  test compatibility - Check cross-platform compatibility
+  migrate plan       - Create comprehensive migration plan
+  migrate execute    - Execute migration plan
+  migrate status     - View migration progress dashboard
+  migrate analyze    - Analyze legacy codebase
   help              - Show this help message
   exit              - Exit PomegranteMuse
 
 Examples:
   analyze ./src
   generate "create a math framework from these files"
+  cicd setup
+  cicd generate rust github_actions
+  benchmark run
+  benchmark suite code_generation
+  security scan
+  security gate pre_commit
+  cost analyze
+  cost budget 500
+  team dashboard
+  enterprise setup
+  enterprise status
+  enterprise project "Legacy Migration"
+  test universal rust go typescript
+  test matrix --minimal
+  test coverage python
+  migrate plan python pomegranate
+  migrate analyze legacy_project
+  migrate status
+  team members
   continue
         """
         print(help_text)
@@ -823,6 +939,26 @@ Examples:
             f.write(final_code)
         
         print(f"\n✅ Generated Pomegranate code saved to: {output_file}")
+        
+        # Handle team collaboration workflow
+        try:
+            team_result = await self.team_integration.handle_code_generation(
+                generated_code=final_code,
+                source_analysis={'files': last_analysis['analyses'], 'ml_analysis': ml_analysis},
+                user_prompt=user_prompt
+            )
+            
+            if team_result.get("requires_review"):
+                review_id = team_result.get("review_request_id")
+                print(f"📋 Code review required - Review ID: {review_id}")
+                print(f"   The generated code has been submitted for team review.")
+            
+            for action in team_result.get("workflow_actions", []):
+                if action == "review_request_created":
+                    print(f"🔄 Workflow: Review request created automatically")
+        
+        except Exception as e:
+            print(f"Note: Team workflow unavailable: {e}")
         
         # Show test results
         if test_result.get('tested'):
@@ -984,6 +1120,1481 @@ Examples:
         else:
             reason = test_result.get('reason', 'Unknown')
             print(f"⚠️  Build testing not available: {reason}")
+    
+    async def _handle_cicd_command(self, command: str):
+        """Handle CI/CD commands"""
+        parts = command.split(maxsplit=2)
+        
+        if len(parts) < 2:
+            print("Usage: cicd <setup|generate|update> [options]")
+            return
+        
+        subcommand = parts[1]
+        
+        try:
+            if subcommand == "setup":
+                print("🚀 Setting up CI/CD pipelines...")
+                pipelines = configure_cicd_interactive(str(self.project_state.working_dir))
+                
+                if pipelines:
+                    print("\n✅ CI/CD setup completed!")
+                    for name, path in pipelines.items():
+                        print(f"  📄 {name}: {path}")
+                else:
+                    print("❌ CI/CD setup failed or was cancelled")
+            
+            elif subcommand == "generate":
+                # Parse additional arguments
+                language = None
+                provider = None
+                
+                if len(parts) > 2:
+                    args = parts[2].split()
+                    if len(args) >= 1:
+                        language = args[0]
+                    if len(args) >= 2:
+                        provider = args[1]
+                
+                print("🔧 Generating CI/CD pipelines...")
+                
+                # Auto-detect if not provided
+                if not language:
+                    detected_lang = self.cicd_integration.detect_project_language()
+                    if detected_lang:
+                        language = detected_lang.value
+                        print(f"Detected language: {language}")
+                    else:
+                        print("❌ Could not detect project language. Please specify: cicd generate <language> [provider]")
+                        print(f"Supported languages: {', '.join(self.cicd_integration.list_supported_languages())}")
+                        return
+                
+                if not provider:
+                    detected_provider = self.cicd_integration.detect_git_provider()
+                    if detected_provider:
+                        provider = detected_provider.value
+                        print(f"Detected provider: {provider}")
+                    else:
+                        provider = "github_actions"
+                        print(f"Using default provider: {provider}")
+                
+                pipelines = self.cicd_integration.generate_pipelines(language, provider)
+                
+                print(f"\n✅ Generated CI/CD pipelines for {language} on {provider}!")
+                for name, path in pipelines.items():
+                    print(f"  📄 {name}: {path}")
+                    
+                    # Validate pipeline
+                    validation = self.cicd_integration.validate_pipeline_config(path)
+                    if validation["valid"]:
+                        print(f"    ✅ Valid configuration")
+                    else:
+                        print(f"    ⚠️  Validation warnings:")
+                        for warning in validation["warnings"]:
+                            print(f"      - {warning}")
+                        for error in validation["errors"]:
+                            print(f"      ❌ {error}")
+            
+            elif subcommand == "update":
+                print("🔄 Updating CI/CD pipelines...")
+                
+                provider = None
+                if len(parts) > 2:
+                    provider = parts[2]
+                
+                pipelines = self.cicd_integration.update_pipeline(provider)
+                
+                print("\n✅ CI/CD pipelines updated!")
+                for name, path in pipelines.items():
+                    print(f"  📄 {name}: {path}")
+            
+            elif subcommand == "providers":
+                print("📋 Supported CI/CD providers:")
+                for provider in self.cicd_integration.list_supported_providers():
+                    features = self.cicd_integration.get_provider_features(provider)
+                    print(f"  • {provider}")
+                    if features:
+                        enabled_features = [k for k, v in features.items() if v]
+                        print(f"    Features: {', '.join(enabled_features)}")
+            
+            elif subcommand == "languages":
+                print("📋 Supported languages:")
+                for language in self.cicd_integration.list_supported_languages():
+                    print(f"  • {language}")
+            
+            else:
+                print(f"Unknown CI/CD subcommand: {subcommand}")
+                print("Available subcommands: setup, generate, update, providers, languages")
+        
+        except Exception as e:
+            print(f"❌ CI/CD command failed: {e}")
+    
+    async def _handle_benchmark_command(self, command: str):
+        """Handle benchmarking commands"""
+        parts = command.split(maxsplit=2)
+        
+        if len(parts) < 2:
+            print("Usage: benchmark <run|suite|file|report> [options]")
+            return
+        
+        subcommand = parts[1]
+        
+        try:
+            if subcommand == "run":
+                print("🏃 Starting interactive benchmarking session...")
+                await run_benchmark_interactive(str(self.project_state.working_dir))
+            
+            elif subcommand == "suite":
+                if len(parts) < 3:
+                    # List available suites
+                    suites = self.benchmark_integration.list_available_suites()
+                    print("📋 Available benchmark suites:")
+                    for key, info in suites.items():
+                        print(f"  • {key}: {info['name']} ({info['type']})")
+                        print(f"    {info['description']}")
+                    return
+                
+                suite_name = parts[2]
+                print(f"🏃 Running benchmark suite: {suite_name}")
+                
+                # Get optional parameters
+                iterations = 3
+                try:
+                    if "iterations=" in command:
+                        iterations = int(command.split("iterations=")[1].split()[0])
+                except:
+                    pass
+                
+                results = await self.benchmark_integration.run_suite(
+                    suite_name, iterations=iterations
+                )
+                
+                print(f"\n✅ Suite completed! {len(results)} benchmarks run.")
+                for test_name, result in results.items():
+                    status = "✅" if result.success else "❌"
+                    print(f"  {status} {test_name}")
+            
+            elif subcommand == "file":
+                if len(parts) < 3:
+                    print("Usage: benchmark file <file_path> [iterations]")
+                    return
+                
+                file_path = parts[2]
+                iterations = 3
+                
+                # Check for iterations parameter
+                if len(command.split()) > 3:
+                    try:
+                        iterations = int(command.split()[3])
+                    except ValueError:
+                        print("Invalid iterations value, using default (3)")
+                
+                print(f"🔨 Benchmarking file: {file_path}")
+                
+                result = await self.benchmark_integration.benchmark_specific_file(
+                    file_path=file_path,
+                    iterations=iterations
+                )
+                
+                if result.success:
+                    print(f"✅ File benchmark completed!")
+                    summary = result.summary
+                    if 'duration' in summary:
+                        duration = summary['duration']
+                        print(f"   Duration: {duration['mean']:.3f}s ± {duration['std_dev']:.3f}s")
+                    if 'memory_usage' in summary:
+                        memory = summary['memory_usage']
+                        print(f"   Memory: {memory['mean']:.1f}MB")
+                else:
+                    print(f"❌ File benchmark failed: {result.error_details}")
+            
+            elif subcommand == "report":
+                days = 30
+                
+                # Check for days parameter
+                if len(parts) > 2:
+                    try:
+                        days = int(parts[2])
+                    except ValueError:
+                        print("Invalid days value, using default (30)")
+                
+                print(f"📊 Generating performance report for last {days} days...")
+                
+                report = self.benchmark_integration.get_performance_report(days)
+                
+                if "error" in report:
+                    print(f"❌ {report['error']}")
+                else:
+                    print(f"\n📊 Performance Report ({report['period']})")
+                    print(f"Total benchmarks: {report['total_benchmarks']}")
+                    
+                    # Show test types
+                    if report['test_types']:
+                        print("\n🔍 Test Performance:")
+                        for test_name, data in report['test_types'].items():
+                            print(f"  • {test_name}: {data['run_count']} runs")
+                    
+                    # Show recommendations
+                    print("\n💡 Recommendations:")
+                    for rec in report['recommendations']:
+                        print(f"  {rec}")
+            
+            elif subcommand == "suites":
+                suites = self.benchmark_integration.list_available_suites()
+                print("📋 Available benchmark suites:")
+                for key, info in suites.items():
+                    print(f"  • {key}: {info['name']} ({info['type']})")
+                    print(f"    {info['description']}")
+                    if info['tags']:
+                        print(f"    Tags: {', '.join(info['tags'])}")
+            
+            else:
+                print(f"Unknown benchmark subcommand: {subcommand}")
+                print("Available subcommands: run, suite, file, report, suites")
+        
+        except Exception as e:
+            print(f"❌ Benchmark command failed: {e}")
+    
+    async def _handle_security_command(self, command: str):
+        """Handle security commands"""
+        parts = command.split(maxsplit=2)
+        
+        if len(parts) < 2:
+            print("Usage: security <scan|quick|gate|dashboard|policy> [options]")
+            return
+        
+        subcommand = parts[1]
+        
+        try:
+            if subcommand == "run":
+                print("🔒 Starting interactive security analysis...")
+                await run_security_scan_interactive(str(self.project_state.working_dir))
+            
+            elif subcommand == "scan":
+                print("🔍 Running comprehensive security scan...")
+                result = await self.security_integration.scan_project_security(
+                    include_external=True, 
+                    policy_check=True
+                )
+                
+                if result["success"]:
+                    summary = result["summary"]
+                    print(f"\n✅ Security scan completed!")
+                    print(f"   Vulnerabilities: {summary['total_vulnerabilities']}")
+                    print(f"   Risk Score: {summary['risk_score']}")
+                    print(f"   Policy Compliant: {summary['policy_compliant']}")
+                    print(f"   Files Scanned: {summary['files_scanned']}")
+                    
+                    # Show policy violations if any
+                    policy_result = result.get("policy_result")
+                    if policy_result and not policy_result["compliant"]:
+                        print("\n⚠️  Policy violations:")
+                        for violation in policy_result["violations"]:
+                            print(f"     - {violation['message']}")
+                    
+                    # Show recommendations
+                    print("\n💡 Recommendations:")
+                    for rec in result["recommendations"]:
+                        print(f"   {rec}")
+                else:
+                    print(f"❌ Security scan failed: {result['error']}")
+            
+            elif subcommand == "quick":
+                print("🔍 Running quick security scan...")
+                result = await self.security_integration.scan_project_security(
+                    include_external=False, 
+                    policy_check=True
+                )
+                
+                if result["success"]:
+                    summary = result["summary"]
+                    print(f"\n✅ Quick scan completed!")
+                    print(f"   Vulnerabilities: {summary['total_vulnerabilities']}")
+                    print(f"   Risk Score: {summary['risk_score']}")
+                    print(f"   Files Scanned: {summary['files_scanned']}")
+                else:
+                    print(f"❌ Quick scan failed: {result['error']}")
+            
+            elif subcommand == "gate":
+                if len(parts) < 3:
+                    # List available gates
+                    gates = self.security_integration.list_security_gates()
+                    print("🚪 Available security gates:")
+                    for gate_name, gate_info in gates.items():
+                        status = "enabled" if gate_info["enabled"] else "disabled"
+                        print(f"  • {gate_name}: {status}")
+                        print(f"    Policy: fail_critical={gate_info['policy']['fail_on_critical']}, "
+                              f"fail_high={gate_info['policy']['fail_on_high']}, "
+                              f"max_risk={gate_info['policy']['max_risk_score']}")
+                    return
+                
+                gate_name = parts[2]
+                print(f"🚪 Running security gate: {gate_name}")
+                
+                result = await self.security_integration.run_security_gate(gate_name)
+                
+                if result.get("skipped"):
+                    print(f"⏭️  {result['message']}")
+                elif result["success"]:
+                    print(f"✅ Security gate '{gate_name}' passed!")
+                else:
+                    print(f"❌ Security gate '{gate_name}' failed!")
+                    for violation in result.get("violations", []):
+                        print(f"   - {violation['message']}")
+                    
+                    if result.get("auto_fix_attempted"):
+                        auto_fix = result["auto_fix_result"]
+                        print(f"🔧 Auto-fix attempted: {auto_fix['fixes_applied']} applied, "
+                              f"{auto_fix['fixes_failed']} failed")
+            
+            elif subcommand == "dashboard":
+                days = 30
+                
+                # Check for days parameter
+                if len(parts) > 2:
+                    try:
+                        days = int(parts[2])
+                    except ValueError:
+                        print("Invalid days value, using default (30)")
+                
+                print(f"📊 Generating security dashboard for last {days} days...")
+                
+                dashboard = self.security_integration.get_security_dashboard(days)
+                
+                print(f"\n📊 Security Dashboard ({dashboard['period']})")
+                print(f"   Total Scans: {dashboard['total_scans']}")
+                print(f"   Total Vulnerabilities: {dashboard['total_vulnerabilities']}")
+                print(f"   Current Posture: {dashboard['current_posture']}")
+                
+                # Show security gates
+                print("\n🚪 Security Gates:")
+                for gate_name, gate_info in dashboard["security_gates"].items():
+                    status = "✅" if gate_info["enabled"] else "❌"
+                    print(f"   {status} {gate_name}")
+                
+                # Show risk trend
+                if dashboard["risk_trend"]:
+                    print("\n📈 Risk Trend (last 5 scans):")
+                    for trend in dashboard["risk_trend"][-5:]:
+                        print(f"   {trend['date']}: Risk {trend['risk_score']}, "
+                              f"Vulns {trend['vulnerability_count']}")
+            
+            elif subcommand == "policy":
+                policy = self.security_integration.policy
+                print("⚙️  Current Security Policy:")
+                print(f"   Fail on Critical: {policy.fail_on_critical}")
+                print(f"   Fail on High: {policy.fail_on_high}")
+                print(f"   Max Risk Score: {policy.max_risk_score}")
+                print(f"   Excluded Categories: {', '.join(policy.excluded_categories) or 'None'}")
+                print(f"   Excluded Files: {', '.join(policy.excluded_files) or 'None'}")
+                
+                # Allow modification
+                modify = input("\nModify policy? [y/N]: ").strip().lower()
+                if modify == 'y':
+                    fail_critical = input(f"Fail on critical vulnerabilities? [{policy.fail_on_critical}]: ").strip()
+                    if fail_critical.lower() in ['true', 'yes', 'y']:
+                        policy.fail_on_critical = True
+                    elif fail_critical.lower() in ['false', 'no', 'n']:
+                        policy.fail_on_critical = False
+                    
+                    fail_high = input(f"Fail on high severity vulnerabilities? [{policy.fail_on_high}]: ").strip()
+                    if fail_high.lower() in ['true', 'yes', 'y']:
+                        policy.fail_on_high = True
+                    elif fail_high.lower() in ['false', 'no', 'n']:
+                        policy.fail_on_high = False
+                    
+                    max_risk = input(f"Maximum risk score [{policy.max_risk_score}]: ").strip()
+                    if max_risk and max_risk.isdigit():
+                        policy.max_risk_score = int(max_risk)
+                    
+                    self.security_integration.save_security_config()
+                    print("✅ Security policy updated!")
+            
+            elif subcommand == "gates":
+                gates = self.security_integration.list_security_gates()
+                print("🚪 Security Gates Configuration:")
+                for gate_name, gate_info in gates.items():
+                    status = "enabled" if gate_info["enabled"] else "disabled"
+                    print(f"\n  • {gate_name} ({status})")
+                    print(f"    Auto-fix: {gate_info['auto_fix']}")
+                    print(f"    Notify on failure: {gate_info['notify_on_failure']}")
+                    policy = gate_info['policy']
+                    print(f"    Policy: critical={policy['fail_on_critical']}, "
+                          f"high={policy['fail_on_high']}, "
+                          f"max_risk={policy['max_risk_score']}")
+            
+            else:
+                print(f"Unknown security subcommand: {subcommand}")
+                print("Available subcommands: run, scan, quick, gate, dashboard, policy, gates")
+        
+        except Exception as e:
+            print(f"❌ Security command failed: {e}")
+    
+    async def _handle_cost_command(self, command: str):
+        """Handle cost analysis commands"""
+        parts = command.split(maxsplit=2)
+        
+        if len(parts) < 2:
+            print("Usage: cost <analyze|estimate|dashboard|budget|optimize> [options]")
+            return
+        
+        subcommand = parts[1]
+        
+        try:
+            if subcommand == "run":
+                print("💰 Starting interactive cost analysis...")
+                await run_cost_analysis_interactive(str(self.project_state.working_dir))
+            
+            elif subcommand == "analyze":
+                print("💰 Running comprehensive cost analysis...")
+                result = await self.cost_integration.analyze_project_costs(
+                    include_predictions=True,
+                    optimization_focus="all"
+                )
+                
+                if result["success"]:
+                    summary = result["summary"]
+                    print(f"\n✅ Cost analysis completed!")
+                    print(f"   Current Monthly Cost: ${summary['current_monthly_cost']:.2f}")
+                    print(f"   Optimization Potential: ${summary['optimization_potential']:.2f}")
+                    print(f"   Cost Efficiency Score: {summary['cost_efficiency_score']}/100")
+                    
+                    # Show budget status
+                    if summary.get("budget_utilization"):
+                        print(f"   Budget Utilization: {summary['budget_utilization']:.1f}%")
+                    
+                    # Show predictions
+                    predictions = result.get("predictions")
+                    if predictions:
+                        print(f"\n📈 Cost Predictions:")
+                        print(f"   Next Month: ${predictions['next_month']:.2f}")
+                        print(f"   Next Quarter: ${predictions['next_quarter']:.2f}")
+                        print(f"   Next Year: ${predictions['next_year']:.2f}")
+                    
+                    # Show top recommendations
+                    recommendations = result["filtered_recommendations"][:3]
+                    if recommendations:
+                        print(f"\n💡 Top Optimization Opportunities:")
+                        for i, rec in enumerate(recommendations, 1):
+                            print(f"   {i}. {rec.description} (${rec.savings_amount:.2f}/month)")
+                    
+                    # Show budget alerts
+                    if result["budget_alerts"]:
+                        print(f"\n⚠️  Budget Alerts:")
+                        for alert in result["budget_alerts"]:
+                            print(f"   - {alert.message}")
+                else:
+                    print(f"❌ Cost analysis failed: {result['error']}")
+            
+            elif subcommand == "estimate":
+                focus = "all"
+                if len(parts) > 2:
+                    focus = parts[2]
+                
+                print(f"⚡ Running quick cost estimate for {focus}...")
+                result = await self.cost_integration.analyze_project_costs(
+                    include_predictions=False,
+                    optimization_focus=focus
+                )
+                
+                if result["success"]:
+                    summary = result["summary"]
+                    print(f"\n✅ Cost estimate completed!")
+                    print(f"   Estimated Monthly Cost: ${summary['current_monthly_cost']:.2f}")
+                    print(f"   Potential Savings: ${summary['optimization_potential']:.2f}")
+                    print(f"   Efficiency Score: {summary['cost_efficiency_score']}/100")
+                else:
+                    print(f"❌ Cost estimate failed: {result['error']}")
+            
+            elif subcommand == "dashboard":
+                days = 30
+                if len(parts) > 2:
+                    try:
+                        days = int(parts[2])
+                    except ValueError:
+                        print("Invalid days value, using default (30)")
+                
+                print(f"📊 Generating cost dashboard for last {days} days...")
+                dashboard = self.cost_integration.get_cost_dashboard(days)
+                
+                print(f"\n📊 Cost Dashboard ({dashboard['period']})")
+                print(f"   Current Monthly Cost: ${dashboard['current_monthly_cost']:.2f}")
+                print(f"   Cost Efficiency Score: {dashboard['cost_efficiency_score']}/100")
+                print(f"   Optimization Potential: ${dashboard['optimization_potential']:.2f}")
+                
+                # Show budget information
+                if dashboard["budget_info"]:
+                    budget = dashboard["budget_info"]
+                    utilization = dashboard.get("budget_utilization", 0)
+                    print(f"   Budget: ${dashboard['current_monthly_cost']:.2f} / ${budget['monthly_limit']:.2f} ({utilization:.1f}%)")
+                
+                # Show cost breakdown
+                print("\n💸 Cost Breakdown:")
+                for category, cost in dashboard["category_breakdown"].items():
+                    percentage = (cost / dashboard['current_monthly_cost'] * 100) if dashboard['current_monthly_cost'] > 0 else 0
+                    print(f"   {category.title()}: ${cost:.2f} ({percentage:.1f}%)")
+                
+                # Show trend analysis
+                trend = dashboard.get("trend_analysis", {})
+                if trend.get("status") != "no_data":
+                    print(f"\n📈 Trend: {trend['interpretation']}")
+                
+                # Show quick wins
+                if dashboard["quick_wins"]:
+                    print("\n🎯 Quick Wins:")
+                    for win in dashboard["quick_wins"]:
+                        print(f"   • {win['title']} (${win['savings']:.2f}/month)")
+                
+                # Show recent alerts
+                if dashboard["recent_alerts"]:
+                    print(f"\n⚠️  Recent Alerts ({len(dashboard['recent_alerts'])}):")
+                    for alert in dashboard["recent_alerts"][:3]:
+                        print(f"   - {alert.message}")
+            
+            elif subcommand == "budget":
+                if len(parts) < 3:
+                    # Show current budget
+                    budget = self.cost_integration.budget
+                    if budget:
+                        print("💰 Current Budget Configuration:")
+                        print(f"   Monthly Limit: ${budget.monthly_limit:.2f}")
+                        print(f"   Alert Thresholds: {budget.alert_thresholds}%")
+                        if budget.category_limits:
+                            print("   Category Limits:")
+                            for category, limit in budget.category_limits.items():
+                                print(f"     {category.title()}: ${limit:.2f}")
+                    else:
+                        print("💰 No budget configured")
+                        print("Usage: cost budget <monthly_limit> [alert_thresholds]")
+                    return
+                
+                try:
+                    monthly_limit = float(parts[2])
+                    
+                    # Parse alert thresholds if provided
+                    alert_thresholds = [50, 80, 95]  # Default
+                    if len(command.split()) > 3:
+                        thresholds_str = command.split()[3]
+                        if "," in thresholds_str:
+                            alert_thresholds = [float(x.strip()) for x in thresholds_str.split(",")]
+                    
+                    success = self.cost_integration.create_budget(monthly_limit, alert_thresholds)
+                    if success:
+                        print(f"✅ Budget set to ${monthly_limit:.2f}/month")
+                        print(f"   Alert thresholds: {alert_thresholds}%")
+                    else:
+                        print("❌ Failed to create budget")
+                
+                except ValueError:
+                    print("Invalid budget amount. Usage: cost budget <monthly_limit>")
+            
+            elif subcommand == "optimize":
+                focus = "all"
+                if len(parts) > 2:
+                    focus = parts[2]
+                
+                print(f"🔍 Finding {focus} optimization opportunities...")
+                result = await self.cost_integration.analyze_project_costs(
+                    include_predictions=False,
+                    optimization_focus=focus
+                )
+                
+                if result["success"]:
+                    recommendations = result["filtered_recommendations"]
+                    roi_info = result["optimization_roi"]
+                    
+                    print(f"\n💡 Found {len(recommendations)} optimization opportunities")
+                    print(f"   Total Monthly Savings: ${roi_info['total_monthly_savings']:.2f}")
+                    print(f"   Annual Savings: ${roi_info['annual_savings']:.2f}")
+                    print(f"   Implementation Cost: ${roi_info['implementation_cost']:.2f}")
+                    print(f"   ROI: {roi_info['roi_percentage']:.1f}%")
+                    print(f"   Payback Period: {roi_info['payback_months']:.1f} months")
+                    
+                    # Show recommendations by effort level
+                    effort_groups = roi_info["recommendations_by_effort"]
+                    for effort in ["low", "medium", "high"]:
+                        group_recs = effort_groups.get(effort, [])
+                        if group_recs:
+                            print(f"\n🎯 {effort.title()} Effort Recommendations:")
+                            for i, rec in enumerate(group_recs[:3], 1):
+                                print(f"   {i}. {rec.description}")
+                                print(f"      Savings: ${rec.savings_amount:.2f}/month")
+                                print(f"      Risk: {rec.risk_level}")
+                else:
+                    print(f"❌ Optimization analysis failed: {result['error']}")
+            
+            elif subcommand == "report":
+                days = 30
+                if len(parts) > 2:
+                    try:
+                        days = int(parts[2])
+                    except ValueError:
+                        print("Invalid days value, using default (30)")
+                
+                print(f"📊 Generating cost report for last {days} days...")
+                
+                # Generate report using the analyzer
+                report = self.cost_integration.analyzer.generate_cost_report(days)
+                
+                if "error" in report:
+                    print(f"❌ {report['error']}")
+                else:
+                    print(f"\n📊 Cost Report ({report['period']})")
+                    print(f"   Total Analyses: {report['total_analyses']}")
+                    print(f"   Average Monthly Cost: ${report['average_monthly_cost']:.2f}")
+                    print(f"   Total Optimization Potential: ${report['total_optimization_potential']:.2f}")
+                    print(f"   Cost Efficiency Score: {report['cost_efficiency_score']}/100")
+                    
+                    # Show category breakdown
+                    if report['category_breakdown']:
+                        print("\n💸 Average Cost by Category:")
+                        for category, cost in report['category_breakdown'].items():
+                            print(f"   {category.title()}: ${cost:.2f}")
+                    
+                    # Show optimization opportunities
+                    if report['optimization_opportunities']:
+                        print("\n🔍 Optimization Opportunities:")
+                        for opp_type, data in report['optimization_opportunities'].items():
+                            print(f"   {opp_type.replace('_', ' ').title()}: {data['count']} opportunities, ${data['total_savings']:.2f} potential savings")
+            
+            else:
+                print(f"Unknown cost subcommand: {subcommand}")
+                print("Available subcommands: run, analyze, estimate, dashboard, budget, optimize, report")
+        
+        except Exception as e:
+            print(f"❌ Cost command failed: {e}")
+    
+    async def _handle_team_command(self, command: str):
+        """Handle team collaboration commands"""
+        parts = command.split(maxsplit=2)
+        
+        if len(parts) < 2:
+            print("Usage: team <dashboard|members|reviews|settings|activity> [options]")
+            return
+        
+        subcommand = parts[1]
+        
+        try:
+            if subcommand == "run":
+                print("👥 Starting interactive team management...")
+                await run_team_management_interactive(str(self.project_state.working_dir))
+            
+            elif subcommand == "dashboard":
+                print("👥 Loading team dashboard...")
+                dashboard = self.team_integration.get_team_dashboard()
+                
+                # Team info
+                team_info = dashboard["team_info"]
+                print(f"\n👥 Team: {team_info['team_name']}")
+                print(f"   Members: {team_info['total_members']} ({team_info['active_members']} active)")
+                print(f"   Owner: {team_info['owner']}")
+                
+                # Role breakdown
+                print(f"\n🎭 Team Composition:")
+                for role, count in team_info['member_count_by_role'].items():
+                    print(f"   {role.title()}: {count}")
+                
+                # Review summary
+                review_summary = dashboard["review_summary"]
+                print(f"\n📋 Code Reviews:")
+                print(f"   Total: {review_summary['total_reviews']}")
+                for status, count in review_summary["reviews_by_status"].items():
+                    print(f"   {status.title()}: {count}")
+                
+                # Productivity metrics
+                metrics = dashboard["productivity_metrics"]
+                print(f"\n📊 Productivity (last 30 days):")
+                print(f"   Code Generations: {metrics['code_generations_last_30_days']}")
+                print(f"   Reviews Completed: {metrics['reviews_completed_last_30_days']}")
+                print(f"   Avg Review Time: {metrics['average_review_time_hours']:.1f} hours")
+                print(f"   Productivity Score: {metrics['productivity_score']}/100")
+                
+                # Recent activities
+                if dashboard["recent_activities"]:
+                    print(f"\n🕐 Recent Activities:")
+                    for activity in dashboard["recent_activities"][-5:]:
+                        timestamp = activity['timestamp'][:16].replace('T', ' ')
+                        print(f"   • {timestamp} - {activity['username']}: {activity['description']}")
+            
+            elif subcommand == "members":
+                team_manager = self.team_integration.team_manager
+                
+                if len(parts) < 3:
+                    # List members
+                    print(f"\n👥 Team Members:")
+                    for member in team_manager.team.members.values():
+                        status = "🟢" if member.is_active else "🔴"
+                        print(f"   {status} {member.username} ({member.role.value})")
+                        print(f"      Email: {member.email}")
+                        print(f"      Joined: {member.joined_at[:10]}")
+                        print(f"      Last Active: {member.last_active[:10]}")
+                    return
+                
+                action = parts[2]
+                
+                if action == "add":
+                    username = input("Username: ").strip()
+                    email = input("Email: ").strip()
+                    role_input = input("Role [developer/reviewer/maintainer/admin]: ").strip().lower()
+                    
+                    from collaboration import UserRole
+                    role_mapping = {
+                        "developer": UserRole.DEVELOPER,
+                        "reviewer": UserRole.REVIEWER,
+                        "maintainer": UserRole.MAINTAINER,
+                        "admin": UserRole.ADMIN
+                    }
+                    
+                    role = role_mapping.get(role_input, UserRole.DEVELOPER)
+                    success = team_manager.add_member(username, email, role)
+                
+                elif action == "remove":
+                    username = input("Username to remove: ").strip()
+                    # Find user by username
+                    user_id = None
+                    for uid, member in team_manager.team.members.items():
+                        if member.username == username:
+                            user_id = uid
+                            break
+                    
+                    if user_id:
+                        success = team_manager.remove_member(user_id)
+                    else:
+                        print("❌ User not found")
+                
+                else:
+                    print("Available actions: add, remove")
+            
+            elif subcommand == "reviews":
+                team_manager = self.team_integration.team_manager
+                
+                if len(parts) < 3:
+                    # Show review dashboard
+                    dashboard = team_manager.get_review_dashboard()
+                    
+                    print(f"\n📋 Review Dashboard")
+                    print(f"   Total Reviews: {dashboard['total_reviews']}")
+                    
+                    print(f"\n📊 By Status:")
+                    for status, count in dashboard['reviews_by_status'].items():
+                        print(f"   {status.title()}: {count}")
+                    
+                    if dashboard['pending_reviews']:
+                        print(f"\n⏳ Pending Reviews:")
+                        for review in dashboard['pending_reviews'][:5]:
+                            print(f"   • {review['request_id']}: {review['title']}")
+                            print(f"     Author: {review['author']}")
+                            print(f"     Reviewers: {', '.join(review['reviewers'])}")
+                            print(f"     Created: {review['created_at'][:10]}")
+                    return
+                
+                action = parts[2]
+                
+                if action == "comment":
+                    request_id = input("Review request ID: ").strip()
+                    comment = input("Comment: ").strip()
+                    
+                    success = team_manager.add_review_comment(request_id, comment)
+                
+                elif action == "approve":
+                    request_id = input("Review request ID: ").strip()
+                    success = team_manager.approve_review_request(request_id)
+                
+                else:
+                    print("Available actions: comment, approve")
+            
+            elif subcommand == "settings":
+                settings = self.team_integration.settings
+                
+                if len(parts) < 3:
+                    # Show current settings
+                    print(f"\n⚙️  Team Settings:")
+                    print(f"   Require Code Review: {settings.require_code_review}")
+                    print(f"   Minimum Reviewers: {settings.min_reviewers}")
+                    print(f"   Auto Assign Reviewers: {settings.auto_assign_reviewers}")
+                    print(f"   Enable Security Gates: {settings.enable_security_gates}")
+                    print(f"   Cost Alert Threshold: ${settings.cost_alert_threshold:.2f}")
+                    print(f"   Workflow Rules: {len(settings.workflow_rules)}")
+                    return
+                
+                setting_name = parts[2]
+                
+                if setting_name == "review":
+                    require_review = input("Require code review? [true/false]: ").strip().lower()
+                    if require_review in ['true', 'false']:
+                        self.team_integration.configure_team_settings(
+                            require_code_review=(require_review == 'true')
+                        )
+                
+                elif setting_name == "reviewers":
+                    min_reviewers = input("Minimum number of reviewers: ").strip()
+                    if min_reviewers.isdigit():
+                        self.team_integration.configure_team_settings(
+                            min_reviewers=int(min_reviewers)
+                        )
+                
+                elif setting_name == "cost_threshold":
+                    threshold = input("Cost alert threshold ($): ").strip()
+                    if threshold.replace('.', '').isdigit():
+                        self.team_integration.configure_team_settings(
+                            cost_alert_threshold=float(threshold)
+                        )
+                
+                else:
+                    print("Available settings: review, reviewers, cost_threshold")
+            
+            elif subcommand == "activity":
+                team_manager = self.team_integration.team_manager
+                
+                if len(parts) < 3:
+                    # Show team activity summary
+                    dashboard = self.team_integration.get_team_dashboard()
+                    metrics = dashboard["productivity_metrics"]
+                    
+                    print(f"\n📈 Team Activity Summary (last 30 days):")
+                    print(f"   Code Generations: {metrics['code_generations_last_30_days']}")
+                    print(f"   Reviews Completed: {metrics['reviews_completed_last_30_days']}")
+                    print(f"   Average Review Time: {metrics['average_review_time_hours']:.1f} hours")
+                    print(f"   Team Productivity Score: {metrics['productivity_score']}/100")
+                    
+                    # Recent activities
+                    if dashboard["recent_activities"]:
+                        print(f"\n🕐 Recent Team Activities:")
+                        for activity in dashboard["recent_activities"][-10:]:
+                            timestamp = activity['timestamp'][:16].replace('T', ' ')
+                            print(f"   • {timestamp} - {activity['username']}: {activity['description']}")
+                    return
+                
+                username = parts[2]
+                
+                # Find user by username
+                user_id = None
+                for uid, member in team_manager.team.members.items():
+                    if member.username == username:
+                        user_id = uid
+                        break
+                
+                if user_id:
+                    activity_report = team_manager.get_member_activity(user_id, 30)
+                    
+                    print(f"\n👤 Activity Report for {username}:")
+                    member_info = activity_report["member_info"]
+                    print(f"   Role: {member_info['role']}")
+                    print(f"   Joined: {member_info['joined_at'][:10]}")
+                    print(f"   Last Active: {member_info['last_active'][:10]}")
+                    
+                    summary = activity_report["activity_summary"]
+                    print(f"\n📊 Activity Summary (last 30 days):")
+                    print(f"   Total Activities: {summary['total_activities']}")
+                    print(f"   Authored Reviews: {summary['authored_reviews']}")
+                    print(f"   Reviewed Requests: {summary['reviewed_requests']}")
+                    
+                    if summary["activity_counts"]:
+                        print(f"\n🎯 Activity Breakdown:")
+                        for activity_type, count in summary["activity_counts"].items():
+                            print(f"   {activity_type.replace('_', ' ').title()}: {count}")
+                    
+                    if activity_report["recent_activities"]:
+                        print(f"\n🕐 Recent Activities:")
+                        for activity in activity_report["recent_activities"]:
+                            timestamp = activity['timestamp'][:16].replace('T', ' ')
+                            print(f"   • {timestamp}: {activity['description']}")
+                else:
+                    print("❌ User not found")
+            
+            else:
+                print(f"Unknown team subcommand: {subcommand}")
+                print("Available subcommands: run, dashboard, members, reviews, settings, activity")
+        
+        except Exception as e:
+            print(f"❌ Team command failed: {e}")
+
+    async def _handle_enterprise_command(self, command: str):
+        """Handle enterprise integration commands"""
+        try:
+            parts = command.split()
+            if len(parts) < 2:
+                print("Usage: enterprise <subcommand>")
+                print("Available subcommands: setup, status, auth, project")
+                return
+                
+            subcommand = parts[1]
+            
+            if subcommand == "setup":
+                print("🏢 Starting enterprise integration setup...")
+                self.enterprise_manager = await run_enterprise_setup_interactive()
+                print("✅ Enterprise integration setup completed")
+                
+            elif subcommand == "status":
+                if not self.enterprise_manager:
+                    print("❌ Enterprise integration not configured. Run 'enterprise setup' first.")
+                    return
+                    
+                print("🏢 Enterprise Integration Status")
+                print("=" * 40)
+                
+                status = self.enterprise_manager.get_integration_status()
+                
+                for integration_type, info in status.items():
+                    status_icon = "✅" if info["initialized"] else "❌"
+                    config_icon = "🔧" if info["configured"] else "⚠️"
+                    
+                    print(f"{status_icon} {integration_type.replace('_', ' ').title()}")
+                    print(f"   Configured: {config_icon}")
+                    print(f"   Initialized: {info['initialized']}")
+                    
+                    if info["manager"]:
+                        for key, value in info["manager"].items():
+                            if key != "status":
+                                print(f"   {key.replace('_', ' ').title()}: {value}")
+                    print()
+                    
+            elif subcommand == "auth":
+                if not self.enterprise_manager or not self.enterprise_manager.auth_manager:
+                    print("❌ Authentication not configured. Run 'enterprise setup' first.")
+                    return
+                    
+                print("🔐 Testing enterprise authentication...")
+                
+                username = input("Username: ").strip()
+                password = input("Password: ").strip()
+                
+                try:
+                    user_profile = await self.enterprise_manager.authenticate_user(username, password)
+                    print(f"✅ Authentication successful!")
+                    print(f"   User: {user_profile.full_name} ({user_profile.email})")
+                    print(f"   Groups: {', '.join(user_profile.groups)}")
+                    print(f"   Roles: {', '.join(user_profile.roles)}")
+                    
+                except Exception as e:
+                    print(f"❌ Authentication failed: {e}")
+                    
+            elif subcommand == "project":
+                if not self.enterprise_manager:
+                    print("❌ Enterprise integration not configured. Run 'enterprise setup' first.")
+                    return
+                    
+                if len(parts) < 3:
+                    print("Usage: enterprise project <project_name>")
+                    return
+                    
+                project_name = " ".join(parts[2:])
+                
+                print(f"🚀 Creating enterprise migration project: {project_name}")
+                
+                # Get project details interactively
+                source_lang = input("Source language: ").strip() or "mixed"
+                target_lang = input("Target language: ").strip() or "pomegranate"
+                
+                # Get file paths from current directory
+                file_paths = []
+                current_dir = Path.cwd()
+                for ext in ['.py', '.js', '.ts', '.java', '.cpp', '.c', '.cs', '.go', '.rs']:
+                    file_paths.extend([str(p) for p in current_dir.rglob(f"*{ext}")[:5]])  # Limit files
+                
+                if not file_paths:
+                    file_paths = ["example.py", "example.js"]  # Placeholder
+                    
+                print(f"📁 Including {len(file_paths)} files in migration project")
+                
+                try:
+                    results = await self.enterprise_manager.create_migration_project(
+                        project_name, source_lang, target_lang, file_paths
+                    )
+                    
+                    print("✅ Migration project created successfully!")
+                    
+                    if results.get("work_items_generated"):
+                        print(f"   📋 Created {results['work_items_generated']} work items")
+                        
+                    if results.get("notification_sent"):
+                        print("   📢 Team notifications sent")
+                        
+                    if results.get("metrics_recorded"):
+                        print("   📊 Metrics recorded")
+                        
+                    if results.get("project_file"):
+                        print(f"   💾 Project saved to {results['project_file']}")
+                        
+                    # Display any errors
+                    for key, value in results.items():
+                        if key.endswith("_error"):
+                            print(f"   ⚠️  {key.replace('_', ' ').title()}: {value}")
+                            
+                except Exception as e:
+                    print(f"❌ Failed to create migration project: {e}")
+                    
+            else:
+                print(f"Unknown enterprise subcommand: {subcommand}")
+                print("Available subcommands: setup, status, auth, project")
+                
+        except Exception as e:
+            print(f"❌ Enterprise command failed: {e}")
+
+    async def _handle_test_command(self, command: str):
+        """Handle universal testing commands"""
+        try:
+            parts = command.split()
+            if len(parts) < 2:
+                print("Usage: test <subcommand>")
+                print("Available subcommands: universal, matrix, coverage, compatibility")
+                return
+                
+            subcommand = parts[1]
+            
+            if subcommand == "universal":
+                await self._handle_universal_test(parts[2:])
+                
+            elif subcommand == "matrix":
+                await self._handle_matrix_test(parts[2:])
+                
+            elif subcommand == "coverage":
+                await self._handle_coverage_test(parts[2:])
+                
+            elif subcommand == "compatibility":
+                await self._handle_compatibility_test(parts[2:])
+                
+            else:
+                print(f"Unknown test subcommand: {subcommand}")
+                print("Available subcommands: universal, matrix, coverage, compatibility")
+                
+        except Exception as e:
+            print(f"❌ Test command failed: {e}")
+    
+    async def _handle_universal_test(self, args: List[str]):
+        """Handle universal build testing"""
+        from universal_testing import BuildEnvironment, TestType, TestSuite
+        
+        # Parse languages from arguments
+        languages = args if args else ["pomegranate"]
+        
+        print(f"🧪 Running universal build testing for: {', '.join(languages)}")
+        
+        project_path = Path.cwd()
+        results = []
+        
+        for language in languages:
+            print(f"\n🔨 Testing {language}...")
+            
+            # Create test environment
+            environment = BuildEnvironment()
+            
+            # Create test suites
+            test_suites = [
+                TestSuite(
+                    name="unit_tests",
+                    language=language,
+                    test_files=[],
+                    test_type=TestType.UNIT,
+                    timeout=300
+                ),
+                TestSuite(
+                    name="integration_tests", 
+                    language=language,
+                    test_files=[],
+                    test_type=TestType.INTEGRATION,
+                    timeout=600
+                )
+            ]
+            
+            # Run build and tests
+            result = await self.universal_builder.build_project(
+                project_path, language, environment, test_suites
+            )
+            
+            results.append(result)
+            
+            # Display result
+            status_icon = "✅" if result.status.value == "success" else "❌"
+            print(f"{status_icon} {language}: {result.status.value} ({result.duration:.1f}s)")
+            
+            if result.error_message:
+                print(f"   Error: {result.error_message}")
+                
+            if result.test_results:
+                passed_tests = len([t for t in result.test_results if t.status.value == "success"])
+                total_tests = len(result.test_results)
+                print(f"   Tests: {passed_tests}/{total_tests} passed")
+        
+        # Generate summary report
+        print(f"\n📊 Universal Test Summary")
+        print("=" * 40)
+        
+        total_builds = len(results)
+        successful_builds = len([r for r in results if r.status.value == "success"])
+        
+        print(f"Builds: {successful_builds}/{total_builds} successful")
+        print(f"Total Duration: {sum(r.duration for r in results):.1f}s")
+        
+        # Save report
+        report = await self.universal_builder.generate_build_report(results)
+        print(f"\n💾 Report saved to {self.universal_builder.cache_dir}")
+    
+    async def _handle_matrix_test(self, args: List[str]):
+        """Handle build matrix testing"""
+        from universal_testing import MatrixStrategy, MatrixConfiguration, MatrixDimension
+        
+        print("🔬 Running build matrix testing...")
+        
+        # Parse strategy from arguments
+        strategy = MatrixStrategy.MINIMAL
+        languages = ["pomegranate", "rust", "go"]
+        
+        for arg in args:
+            if arg == "--full":
+                strategy = MatrixStrategy.FULL
+            elif arg == "--minimal":
+                strategy = MatrixStrategy.MINIMAL
+            elif arg == "--targeted":
+                strategy = MatrixStrategy.TARGETED
+            elif not arg.startswith("--"):
+                # Treat as language
+                if not languages or languages == ["pomegranate", "rust", "go"]:
+                    languages = [arg]
+                else:
+                    languages.append(arg)
+        
+        print(f"Strategy: {strategy.value}")
+        print(f"Languages: {', '.join(languages)}")
+        
+        # Create matrix configuration
+        config = MatrixConfiguration(
+            languages=MatrixDimension("language", languages),
+            platforms=MatrixDimension("platform", ["windows", "linux", "darwin"]),
+            architectures=MatrixDimension("architecture", ["x86_64"]),
+            strategy=strategy,
+            max_parallel_jobs=2
+        )
+        
+        # Execute matrix
+        project_path = Path.cwd()
+        result = await self.build_matrix.execute_matrix(project_path, config)
+        
+        # Display results
+        print(f"\n📊 Build Matrix Results")
+        print("=" * 40)
+        print(f"Total Combinations: {result.total_combinations}")
+        print(f"Executed: {result.executed_combinations}")
+        print(f"Successful: {result.successful_combinations}")
+        
+        success_rate = (result.successful_combinations / result.executed_combinations * 100) if result.executed_combinations > 0 else 0
+        print(f"Success Rate: {success_rate:.1f}%")
+        
+        # Show results by language
+        print(f"\n📋 Results by Language:")
+        for language in languages:
+            lang_results = [r for r in result.build_results if r.language == language]
+            if lang_results:
+                successful = len([r for r in lang_results if r.status.value == "success"])
+                total = len(lang_results)
+                print(f"  {language}: {successful}/{total} successful")
+        
+        # Show compatibility issues
+        incompatible = [c for c in result.compatibility_results if c.level.value == "incompatible"]
+        if incompatible:
+            print(f"\n⚠️  Compatibility Issues:")
+            for comp in incompatible[:5]:  # Show first 5
+                combo = comp.combination
+                print(f"  {combo['language']} on {combo['platform']}: {', '.join(comp.issues[:2])}")
+        
+        print(f"\n💾 Matrix results saved to {self.build_matrix.cache_dir}")
+    
+    async def _handle_coverage_test(self, args: List[str]):
+        """Handle coverage testing"""
+        from universal_testing import TestConfiguration, TestType
+        
+        languages = args if args else ["pomegranate"]
+        
+        print(f"📈 Running coverage analysis for: {', '.join(languages)}")
+        
+        # Create test configuration with coverage enabled
+        config = TestConfiguration(
+            languages=languages,
+            test_types=[TestType.UNIT, TestType.INTEGRATION],
+            coverage_enabled=True,
+            performance_profiling=False,
+            generate_reports=True
+        )
+        
+        # Run comprehensive tests
+        project_path = Path.cwd()
+        result = await self.test_orchestrator.run_comprehensive_tests(project_path, config)
+        
+        # Display coverage results
+        print(f"\n📊 Coverage Results")
+        print("=" * 40)
+        
+        if result.coverage_reports:
+            for coverage in result.coverage_reports:
+                print(f"{coverage.language}:")
+                print(f"  Line Coverage: {coverage.line_coverage:.1f}%")
+                print(f"  Lines: {coverage.covered_lines}/{coverage.total_lines}")
+                
+                if coverage.branch_coverage > 0:
+                    print(f"  Branch Coverage: {coverage.branch_coverage:.1f}%")
+                    print(f"  Branches: {coverage.covered_branches}/{coverage.total_branches}")
+        else:
+            print("No coverage data available")
+            print("Note: Coverage tools may need to be installed for your languages")
+        
+        # Show overall summary
+        if result.summary:
+            print(f"\nOverall Coverage: {result.summary.get('overall_coverage', 0):.1f}%")
+            print(f"Test Success Rate: {result.summary.get('test_success_rate', 0):.1f}%")
+        
+        print(f"\n💾 Coverage reports saved to {self.test_orchestrator.cache_dir}/reports")
+    
+    async def _handle_compatibility_test(self, args: List[str]):
+        """Handle compatibility testing"""
+        from universal_testing import CrossPlatformTester, CompatibilityChecker
+        
+        languages = args if args else ["pomegranate", "rust", "go"]
+        
+        print(f"🌐 Running cross-platform compatibility testing...")
+        print(f"Languages: {', '.join(languages)}")
+        
+        # Run cross-platform testing
+        tester = CrossPlatformTester()
+        project_path = Path.cwd()
+        
+        result = await tester.test_cross_platform_compatibility(project_path, languages)
+        
+        # Display compatibility results
+        print(f"\n🔍 Compatibility Results")
+        print("=" * 40)
+        
+        # Group by compatibility level
+        compatibility_summary = {}
+        for comp_result in result.compatibility_results:
+            level = comp_result.level.value
+            if level not in compatibility_summary:
+                compatibility_summary[level] = []
+            compatibility_summary[level].append(comp_result)
+        
+        for level, results in compatibility_summary.items():
+            icon = "✅" if level == "compatible" else "⚠️" if level == "partially_compatible" else "❌"
+            print(f"{icon} {level.replace('_', ' ').title()}: {len(results)} combinations")
+            
+            # Show examples
+            for result_item in results[:3]:  # Show first 3
+                combo = result_item.combination
+                print(f"   {combo['language']} on {combo['platform']}-{combo['architecture']}")
+        
+        # Show recommendations
+        if result.summary and result.summary.get("recommendations"):
+            print(f"\n💡 Recommendations:")
+            for rec in result.summary["recommendations"][:5]:
+                print(f"  • {rec}")
+        
+        print(f"\n💾 Compatibility results saved to {tester.build_matrix.cache_dir}")
+
+    async def _handle_migrate_command(self, command: str):
+        """Handle migration strategy commands"""
+        try:
+            parts = command.split()
+            if len(parts) < 2:
+                print("Usage: migrate <subcommand>")
+                print("Available subcommands: plan, execute, status, analyze")
+                return
+                
+            subcommand = parts[1]
+            
+            if subcommand == "plan":
+                await self._handle_migration_plan(parts[2:])
+                
+            elif subcommand == "execute":
+                await self._handle_migration_execute(parts[2:])
+                
+            elif subcommand == "status":
+                await self._handle_migration_status(parts[2:])
+                
+            elif subcommand == "analyze":
+                await self._handle_migration_analyze(parts[2:])
+                
+            else:
+                print(f"Unknown migration subcommand: {subcommand}")
+                print("Available subcommands: plan, execute, status, analyze")
+                
+        except Exception as e:
+            print(f"❌ Migration command failed: {e}")
+    
+    async def _handle_migration_plan(self, args: List[str]):
+        """Handle migration planning"""
+        if len(args) < 2:
+            print("Usage: migrate plan <source_language> <target_language> [strategy]")
+            print("Strategies: big_bang, strangler_fig, incremental, parallel_run")
+            return
+        
+        source_language = args[0]
+        target_language = args[1]
+        strategy = None
+        
+        if len(args) > 2:
+            strategy_map = {
+                "big_bang": MigrationStrategy.BIG_BANG,
+                "strangler_fig": MigrationStrategy.STRANGLER_FIG,
+                "incremental": MigrationStrategy.INCREMENTAL,
+                "parallel_run": MigrationStrategy.PARALLEL_RUN
+            }
+            strategy = strategy_map.get(args[2])
+        
+        print(f"🗺️  Creating migration plan: {source_language} → {target_language}")
+        if strategy:
+            print(f"Strategy: {strategy.value}")
+        
+        project_path = Path.cwd()
+        
+        try:
+            # Create migration plan
+            plan = await self.migration_planner.create_migration_plan(
+                project_path, source_language, target_language, strategy
+            )
+            
+            print(f"\n📋 Migration Plan Created")
+            print("=" * 40)
+            print(f"Project: {plan.project_name}")
+            print(f"Strategy: {plan.strategy.value}")
+            print(f"Components: {len(plan.component_analysis)}")
+            
+            # Show timeline
+            if plan.timeline:
+                print(f"\n⏰ Timeline:")
+                for phase, date in list(plan.timeline.items())[:5]:  # Show first 5 phases
+                    print(f"  {phase.replace('_', ' ').title()}: {date.strftime('%Y-%m-%d')}")
+            
+            # Show resource requirements
+            if plan.resource_requirements:
+                resources = plan.resource_requirements
+                print(f"\n💼 Resource Requirements:")
+                print(f"  Developers: {resources.get('developers_needed', 'N/A')}")
+                print(f"  Duration: {resources.get('estimated_duration_months', 'N/A')} months")
+                print(f"  Effort: {resources.get('total_effort_hours', 'N/A')} hours")
+            
+            # Show high-risk components
+            high_risk_assessments = [r for r in plan.risk_assessments 
+                                   if r.risk_level.value in ['high', 'critical']]
+            if high_risk_assessments:
+                print(f"\n⚠️  High-Risk Components ({len(high_risk_assessments)}):")
+                for risk in high_risk_assessments[:3]:  # Show top 3
+                    print(f"  • {risk.component}: {risk.risk_level.value} risk")
+                    if risk.risk_factors:
+                        print(f"    {risk.risk_factors[0]}")
+            
+            # Show success criteria
+            if plan.success_criteria:
+                print(f"\n🎯 Success Criteria:")
+                for criteria in plan.success_criteria[:3]:  # Show first 3
+                    print(f"  • {criteria}")
+            
+            print(f"\n💾 Migration plan saved to {self.migration_planner.cache_dir}")
+            
+        except Exception as e:
+            print(f"❌ Failed to create migration plan: {e}")
+    
+    async def _handle_migration_execute(self, args: List[str]):
+        """Handle migration execution"""
+        print("🚀 Migration execution would begin here")
+        print("Note: This would execute the migration plan step by step")
+        print("Including code translation, testing, and validation")
+        
+        # For demo purposes, show what would happen
+        project_path = Path.cwd()
+        
+        print(f"\n📁 Project: {project_path.name}")
+        print("🔄 Execution steps would include:")
+        print("  1. Component dependency analysis")
+        print("  2. Code translation using ML models")
+        print("  3. Test migration and validation")
+        print("  4. Build system setup")
+        print("  5. Performance benchmarking")
+        print("  6. Security validation")
+        print("  7. Deployment preparation")
+        
+        print(f"\n⏳ Estimated execution time: Variable based on project size")
+        print("Use 'migrate status' to track progress during execution")
+    
+    async def _handle_migration_status(self, args: List[str]):
+        """Handle migration status dashboard"""
+        project_name = args[0] if args else Path.cwd().name
+        
+        print(f"📊 Migration Status Dashboard")
+        print("=" * 50)
+        
+        try:
+            # Display text-based dashboard
+            self.status_dashboard.display_text_dashboard(project_name)
+            
+        except Exception as e:
+            print(f"❌ No migration data available for {project_name}")
+            print("Run 'migrate plan' first to create a migration plan")
+            print(f"Error: {e}")
+    
+    async def _handle_migration_analyze(self, args: List[str]):
+        """Handle legacy codebase analysis"""
+        language = args[0] if args else "python"
+        project_path = Path.cwd()
+        
+        print(f"🔍 Analyzing legacy codebase: {project_path.name}")
+        print(f"Language: {language}")
+        
+        try:
+            # Analyze legacy codebase
+            components = await self.legacy_analyzer.analyze_legacy_codebase(project_path, language)
+            
+            if not components:
+                print("❌ No source files found for analysis")
+                return
+            
+            print(f"\n📊 Legacy Analysis Results")
+            print("=" * 40)
+            print(f"Components analyzed: {len(components)}")
+            
+            # Show summary statistics
+            total_loc = sum(c.lines_of_code for c in components.values())
+            total_debt = sum(len(c.technical_debt) for c in components.values())
+            avg_maintainability = sum(c.maintainability_score for c in components.values()) / len(components)
+            
+            print(f"Total lines of code: {total_loc:,}")
+            print(f"Technical debt items: {total_debt}")
+            print(f"Average maintainability: {avg_maintainability:.1f}/10")
+            
+            # Show top technical debt items
+            all_debt = []
+            for component in components.values():
+                all_debt.extend(component.technical_debt)
+            
+            high_severity_debt = [d for d in all_debt if d.severity.value in ['high', 'critical']]
+            if high_severity_debt:
+                print(f"\n⚠️  High-Severity Technical Debt ({len(high_severity_debt)} items):")
+                for debt in high_severity_debt[:5]:  # Show top 5
+                    print(f"  • {debt.description} ({debt.severity.value})")
+                    print(f"    File: {Path(debt.file_path).name}:{debt.line_number}")
+            
+            # Show components with lowest maintainability
+            low_maintainability = sorted(components.values(), 
+                                       key=lambda x: x.maintainability_score)[:3]
+            if low_maintainability:
+                print(f"\n🔧 Components Needing Attention:")
+                for component in low_maintainability:
+                    print(f"  • {component.name}: {component.maintainability_score:.1f}/10")
+                    print(f"    {len(component.technical_debt)} debt items, {component.lines_of_code} LOC")
+            
+            # Generate modernization targets
+            targets = self.legacy_analyzer.generate_modernization_targets(components)
+            if targets:
+                print(f"\n🎯 Modernization Targets ({len(targets)}):")
+                for target in targets[:3]:  # Show top 3
+                    print(f"  • {target.component}")
+                    print(f"    Complexity: {target.migration_complexity}")
+                    print(f"    Effort: {target.estimated_effort_days} days")
+                    print(f"    Business Value: {target.business_value:.1f}/10")
+            
+            print(f"\n💡 Recommendations:")
+            print("  • Focus on high-severity technical debt first")
+            print("  • Consider refactoring components with low maintainability scores")
+            print("  • Plan migration starting with highest business value targets")
+            
+        except Exception as e:
+            print(f"❌ Analysis failed: {e}")
 
 def main():
     """Main entry point"""
