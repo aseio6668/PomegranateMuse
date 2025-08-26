@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Demo script for PomegranteMuse
-Shows the complete workflow from code analysis to Pomegranate generation
+Demo script for MyndraComposer
+Shows the complete workflow from code analysis to Myndra generation
 """
 
 import asyncio
@@ -11,19 +11,19 @@ from pathlib import Path
 # Add current directory to path so we can import our modules
 sys.path.insert(0, str(Path(__file__).parent))
 
-from pomuse import InteractiveCLI, CodeAnalyzer, EnhancedOllamaProvider, PomegranateGenerator
+from pomuse import InteractiveCLI, CodeAnalyzer, EnhancedOllamaProvider, MyndraGenerator
 
 
 async def run_automated_demo():
-    """Run an automated demo of PomegranteMuse capabilities"""
-    print("🍎 PomegranteMuse Automated Demo")
+    """Run an automated demo of MyndraComposer capabilities"""
+    print("🍎 MyndraComposer Automated Demo")
     print("=" * 50)
     
     # Initialize components
     working_dir = Path(__file__).parent
     analyzer = CodeAnalyzer()
     ollama = EnhancedOllamaProvider()
-    generator = PomegranateGenerator(ollama)
+    generator = MyndraGenerator(ollama)
     
     # Initialize Ollama
     print("\n1. Initializing ML provider...")
@@ -80,15 +80,15 @@ async def run_automated_demo():
         template_type = context_analysis.get('translation_strategy', {}).get('template_type', 'basic_app')
         print(f"   Recommended template: {template_type}")
         
-        features = context_analysis.get('translation_strategy', {}).get('pomegranate_features_to_use', [])
+        features = context_analysis.get('translation_strategy', {}).get('myndra_features_to_use', [])
         print(f"   Suggested features: {', '.join(features) if features else 'basic'}")
         
     except Exception as e:
         print(f"⚠️  Context analysis failed: {e}")
         context_analysis = {"translation_strategy": {"template_type": "basic_app"}}
     
-    # Generate Pomegranate code
-    print("\n4. Generating Pomegranate code...")
+    # Generate Myndra code
+    print("\n4. Generating Myndra code...")
     
     try:
         full_context = {
@@ -99,11 +99,11 @@ async def run_automated_demo():
         generated_code = await generator.generate_code(full_context, user_prompt)
         
         # Save generated code
-        output_file = working_dir / "demo_output.pom"
+        output_file = working_dir / "demo_output.myn"
         with open(output_file, 'w') as f:
             f.write(generated_code)
         
-        print(f"✅ Generated Pomegranate code saved to: {output_file}")
+        print(f"✅ Generated Myndra code saved to: {output_file}")
         print("\n5. Generated code preview:")
         print("-" * 40)
         
@@ -127,7 +127,7 @@ async def run_automated_demo():
 
 async def run_interactive_demo():
     """Run interactive CLI demo"""
-    print("🍎 Starting PomegranteMuse Interactive Demo")
+    print("🍎 Starting MyndraComposer Interactive Demo")
     print("=" * 50)
     
     cli = InteractiveCLI()

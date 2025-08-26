@@ -1,5 +1,5 @@
 """
-Dashboard Server for PomegranteMuse
+Dashboard Server for MyndraComposer
 Main web server providing dashboard interface
 """
 
@@ -21,7 +21,7 @@ from .api_routes import register_api_routes
 from .websocket_handler import setup_websocket_routes
 
 class DashboardServer:
-    """Web dashboard server for PomegranteMuse"""
+    """Web dashboard server for MyndraComposer"""
     
     def __init__(self, pomuse_manager=None, config_manager=None, port=8080):
         self.pomuse_manager = pomuse_manager

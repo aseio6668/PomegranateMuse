@@ -1,5 +1,5 @@
 """
-Cost Analysis Integration Module for PomegranteMuse
+Cost Analysis Integration Module for MyndraComposer
 Integrates cost analysis with project management and deployment tracking
 """
 
@@ -660,7 +660,7 @@ async def run_cost_analysis_interactive(project_root: str):
     """Interactive cost analysis runner"""
     integration = CostIntegration(project_root)
     
-    print("💰 PomegranteMuse Cost Analysis")
+    print("💰 MyndraComposer Cost Analysis")
     print("=" * 50)
     
     # Analysis options

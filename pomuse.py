@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-PomegranteMuse - ML-powered code analysis and translation tool for Pomegranate
+MyndraComposer - ML-powered code analysis and translation tool for Myndra
 A cross-platform tool that uses machine learning to analyze source code files
-and translate them into idiomatic Pomegranate programming language code.
+and translate them into idiomatic Myndra programming language code.
 """
 
 import os
@@ -36,7 +36,7 @@ from migration_strategy import (
 
 # Version info
 __version__ = "0.1.0"
-__author__ = "PomegranteMuse Contributors"
+__author__ = "MyndraComposer Contributors"
 
 class ProjectState:
     """Manages project state and .pomuse directory"""
@@ -343,7 +343,7 @@ class EnhancedOllamaProvider:
                     # Fallback response
                     return {
                         "project_type": "Unknown project type",
-                        "pomegranate_architecture": {
+                        "myndra_architecture": {
                             "recommended_style": "traditional",
                             "key_modules": ["main"],
                             "security_approach": "basic"
@@ -351,7 +351,7 @@ class EnhancedOllamaProvider:
                         "translation_strategy": {
                             "template_type": "basic_app",
                             "key_transformations": ["direct_translation"],
-                            "pomegranate_features_to_use": ["basic_syntax"]
+                            "myndra_features_to_use": ["basic_syntax"]
                         },
                         "implementation_plan": ["Create basic structure", "Translate core logic"],
                         "recommendations": ["Start with simple approach"]
@@ -365,27 +365,27 @@ class EnhancedOllamaProvider:
                 "recommendations": ["Check Ollama connection"]
             }
     
-    async def generate_pomegranate_code(self, context: Dict[str, Any], user_prompt: str) -> str:
-        """Generate Pomegranate code using ML model"""
+    async def generate_myndra_code(self, context: Dict[str, Any], user_prompt: str) -> str:
+        """Generate Myndra code using ML model"""
         if not self.client:
             await self.initialize()
         
         template_type = context.get('translation_strategy', {}).get('template_type', 'basic_app')
-        prompt = CodeAnalysisPrompts.generate_pomegranate_code(context, user_prompt, template_type)
+        prompt = CodeAnalysisPrompts.generate_myndra_code(context, user_prompt, template_type)
         
         try:
             async with self.client as client:
                 response = await client.generate(
                     model=self.default_model,
                     prompt=prompt,
-                    system="You are an expert Pomegranate programmer. Generate clean, idiomatic code.",
+                    system="You are an expert Myndra programmer. Generate clean, idiomatic code.",
                     temperature=0.3
                 )
                 return response.content
         except Exception as e:
             print(f"Code generation failed: {e}")
             return f"""// Code generation failed: {e}
-// Fallback basic Pomegranate template
+// Fallback basic Myndra template
 
 import std::io with capabilities("write")
 
@@ -395,12 +395,12 @@ fn main() {{
 }}
 """
 
-class PomegranateGenerator:
-    """Generates Pomegranate code from analysis and ML insights"""
+class MyndraGenerator:
+    """Generates Myndra code from analysis and ML insights"""
     
     def __init__(self, ollama_provider: EnhancedOllamaProvider):
         self.ollama = ollama_provider
-        self.pomegranate_templates = {
+        self.myndra_templates = {
             "basic_app": self._basic_app_template,
             "reactive_ui": self._reactive_ui_template,
             "api_client": self._api_client_template,
@@ -408,11 +408,11 @@ class PomegranateGenerator:
         }
     
     async def generate_code(self, analysis: Dict[str, Any], user_prompt: str) -> str:
-        """Generate Pomegranate code based on analysis and user intent"""
+        """Generate Myndra code based on analysis and user intent"""
         
         # Use ML model for code generation if available
         try:
-            ml_generated_code = await self.ollama.generate_pomegranate_code(analysis, user_prompt)
+            ml_generated_code = await self.ollama.generate_myndra_code(analysis, user_prompt)
             if ml_generated_code and not ml_generated_code.startswith("// Code generation failed"):
                 return ml_generated_code
         except Exception as e:
@@ -420,7 +420,7 @@ class PomegranateGenerator:
         
         # Fallback to template-based generation
         template_name = self._select_template(analysis)
-        template_func = self.pomegranate_templates.get(template_name, self._basic_app_template)
+        template_func = self.myndra_templates.get(template_name, self._basic_app_template)
         
         # Generate base code structure
         base_code = template_func(analysis, user_prompt)
@@ -443,15 +443,15 @@ class PomegranateGenerator:
             return "basic_app"
     
     def _basic_app_template(self, analysis: Dict[str, Any], prompt: str) -> str:
-        """Basic Pomegranate application template"""
-        return f'''// Generated Pomegranate application
+        """Basic Myndra application template"""
+        return f'''// Generated Myndra application
 // Original prompt: {prompt}
 
 import std::io with capabilities("write")
 
 #tag:app:main
 fn main() {{
-    log("Starting Pomegranate application") if context == "dev"
+    log("Starting Myndra application") if context == "dev"
     
     // TODO: Implement core functionality based on analysis
     let app_data = initialize_app()
@@ -471,13 +471,13 @@ fn initialize_app() -> AppData {{
 #tag:core
 fn run_application(data: AppData) {{
     // Main application logic
-    print("Pomegranate application running!")
+    print("Myndra application running!")
 }}
 '''
     
     def _reactive_ui_template(self, analysis: Dict[str, Any], prompt: str) -> str:
-        """Reactive UI Pomegranate template"""
-        return f'''// Generated Pomegranate UI application
+        """Reactive UI Myndra template"""
+        return f'''// Generated Myndra UI application
 // Original prompt: {prompt}
 
 import std::ui with capabilities("render", "event-handling")
@@ -491,16 +491,16 @@ capsule main_app {{
     #tag:ui:render
     fn render() -> Element {{
         return ui::div([
-            ui::header("Pomegranate App"),
+            ui::header("Myndra App"),
             render_main_content(),
-            ui::footer("Generated by PomegranteMuse")
+            ui::footer("Generated by MyndraComposer")
         ])
     }}
     
     #tag:ui:components
     fn render_main_content() -> Element {{
         return ui::div([
-            ui::h2("Welcome to your Pomegranate application"),
+            ui::h2("Welcome to your Myndra application"),
             ui::p("This UI adapts reactively to state changes")
         ])
     }}
@@ -515,8 +515,8 @@ fn main() {{
 '''
     
     def _api_client_template(self, analysis: Dict[str, Any], prompt: str) -> str:
-        """API client Pomegranate template"""
-        return f'''// Generated Pomegranate API client
+        """API client Myndra template"""
+        return f'''// Generated Myndra API client
 // Original prompt: {prompt}
 
 import net::http with capabilities("fetch", "post")
@@ -554,8 +554,8 @@ fn main() {{
 '''
     
     def _data_processor_template(self, analysis: Dict[str, Any], prompt: str) -> str:
-        """Data processing Pomegranate template"""
-        return f'''// Generated Pomegranate data processor
+        """Data processing Myndra template"""
+        return f'''// Generated Myndra data processor
 // Original prompt: {prompt}
 
 import std::collections with capabilities("iterate", "transform")
@@ -605,7 +605,7 @@ fn main() {{
         # For now, return the base code with some basic refinements
         
         refinement_prompt = f"""
-        Refine this Pomegranate code based on the analysis and user requirements:
+        Refine this Myndra code based on the analysis and user requirements:
         
         Base code:
         {base_code}
@@ -619,27 +619,27 @@ fn main() {{
         1. Adding appropriate error handling
         2. Including relevant domain-specific logic
         3. Optimizing for the detected use case
-        4. Following Pomegranate best practices
+        4. Following Myndra best practices
         """
         
         # Placeholder - would use actual ML model
         return base_code
 
 class InteractiveCLI:
-    """Interactive command-line interface for PomegranteMuse"""
+    """Interactive command-line interface for MyndraComposer"""
     
     def __init__(self):
         self.project_state = None
         self.code_analyzer = CodeAnalyzer()
         self.ollama_provider = EnhancedOllamaProvider()
-        self.pomegranate_generator = PomegranateGenerator(self.ollama_provider)
+        self.myndra_generator = MyndraGenerator(self.ollama_provider)
         self.build_tester = BuildTestingIntegration()
         self.cicd_integration = None  # Will be initialized with working directory
         self.enterprise_manager = None  # Will be initialized with working directory
     
     async def start_interactive_session(self, working_dir: Path):
         """Start interactive session"""
-        print(f"🍎 Welcome to PomegranteMuse v{__version__}")
+        print(f"🍎 Welcome to MyndraComposer v{__version__}")
         print(f"Working directory: {working_dir}")
         
         # Initialize project
@@ -738,7 +738,7 @@ class InteractiveCLI:
 Available commands:
 
   analyze [path]     - Analyze source code files in the specified path
-  generate <prompt>  - Generate Pomegranate code based on analysis and prompt
+  generate <prompt>  - Generate Myndra code based on analysis and prompt
   continue          - Continue from last session using .pomuse state
   status            - Show current project status
   build test [file]  - Test build a specific generated file
@@ -779,7 +779,7 @@ Available commands:
   migrate status     - View migration progress dashboard
   migrate analyze    - Analyze legacy codebase
   help              - Show this help message
-  exit              - Exit PomegranteMuse
+  exit              - Exit MyndraComposer
 
 Examples:
   analyze ./src
@@ -799,7 +799,7 @@ Examples:
   test universal rust go typescript
   test matrix --minimal
   test coverage python
-  migrate plan python pomegranate
+  migrate plan python myndra
   migrate analyze legacy_project
   migrate status
   team members
@@ -910,7 +910,7 @@ Examples:
             print("No analysis found. Please run 'analyze' first.")
             return
         
-        print(f"Generating Pomegranate code for: {user_prompt}")
+        print(f"Generating Myndra code for: {user_prompt}")
         
         # Get ML analysis
         ml_analysis = await self.ollama_provider.analyze_code_context(
@@ -918,7 +918,7 @@ Examples:
         )
         
         # Generate code
-        generated_code = await self.pomegranate_generator.generate_code(
+        generated_code = await self.myndra_generator.generate_code(
             {'files': last_analysis['analyses'], 'ml_analysis': ml_analysis},
             user_prompt
         )
@@ -934,11 +934,11 @@ Examples:
         final_code = test_result.get('final_code', generated_code)
         
         # Save generated code
-        output_file = self.project_state.outputs_dir / f"generated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pom"
+        output_file = self.project_state.outputs_dir / f"generated_{datetime.now().strftime('%Y%m%d_%H%M%S')}.myn"
         with open(output_file, 'w') as f:
             f.write(final_code)
         
-        print(f"\n✅ Generated Pomegranate code saved to: {output_file}")
+        print(f"\n✅ Generated Myndra code saved to: {output_file}")
         
         # Handle team collaboration workflow
         try:
@@ -2083,7 +2083,7 @@ Examples:
                 
                 # Get project details interactively
                 source_lang = input("Source language: ").strip() or "mixed"
-                target_lang = input("Target language: ").strip() or "pomegranate"
+                target_lang = input("Target language: ").strip() or "myndra"
                 
                 # Get file paths from current directory
                 file_paths = []
@@ -2165,7 +2165,7 @@ Examples:
         from universal_testing import BuildEnvironment, TestType, TestSuite
         
         # Parse languages from arguments
-        languages = args if args else ["pomegranate"]
+        languages = args if args else ["myndra"]
         
         print(f"🧪 Running universal build testing for: {', '.join(languages)}")
         
@@ -2237,7 +2237,7 @@ Examples:
         
         # Parse strategy from arguments
         strategy = MatrixStrategy.MINIMAL
-        languages = ["pomegranate", "rust", "go"]
+        languages = ["myndra", "rust", "go"]
         
         for arg in args:
             if arg == "--full":
@@ -2248,7 +2248,7 @@ Examples:
                 strategy = MatrixStrategy.TARGETED
             elif not arg.startswith("--"):
                 # Treat as language
-                if not languages or languages == ["pomegranate", "rust", "go"]:
+                if not languages or languages == ["myndra", "rust", "go"]:
                     languages = [arg]
                 else:
                     languages.append(arg)
@@ -2302,7 +2302,7 @@ Examples:
         """Handle coverage testing"""
         from universal_testing import TestConfiguration, TestType
         
-        languages = args if args else ["pomegranate"]
+        languages = args if args else ["myndra"]
         
         print(f"📈 Running coverage analysis for: {', '.join(languages)}")
         
@@ -2347,7 +2347,7 @@ Examples:
         """Handle compatibility testing"""
         from universal_testing import CrossPlatformTester, CompatibilityChecker
         
-        languages = args if args else ["pomegranate", "rust", "go"]
+        languages = args if args else ["myndra", "rust", "go"]
         
         print(f"🌐 Running cross-platform compatibility testing...")
         print(f"Languages: {', '.join(languages)}")
@@ -2599,7 +2599,7 @@ Examples:
 def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(
-        description="PomegranteMuse - ML-powered code analysis and translation for Pomegranate"
+        description="MyndraComposer - ML-powered code analysis and translation for Myndra"
     )
     parser.add_argument(
         "--working-dir", 
@@ -2610,7 +2610,7 @@ def main():
     parser.add_argument(
         "--version", 
         action="version", 
-        version=f"PomegranteMuse {__version__}"
+        version=f"MyndraComposer {__version__}"
     )
     
     args = parser.parse_args()
@@ -2621,7 +2621,7 @@ def main():
     try:
         asyncio.run(cli.start_interactive_session(args.working_dir))
     except KeyboardInterrupt:
-        print("\nExiting PomegranteMuse...")
+        print("\nExiting MyndraComposer...")
         sys.exit(0)
     except Exception as e:
         print(f"Fatal error: {e}")

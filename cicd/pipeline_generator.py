@@ -1,5 +1,5 @@
 """
-CI/CD Pipeline Generator for PomegranteMuse
+CI/CD Pipeline Generator for MyndraComposer
 Generates comprehensive CI/CD pipelines for multiple platforms and languages
 """
 
@@ -23,7 +23,7 @@ class LanguageType(Enum):
     GO = "go"
     TYPESCRIPT = "typescript"
     PYTHON = "python"
-    POMEGRANATE = "pomegranate"
+    MYNDRA = "myndra"
 
 @dataclass
 class PipelineConfig:
@@ -669,7 +669,7 @@ pipeline {{
             LanguageType.GO: "go mod download",
             LanguageType.TYPESCRIPT: "npm ci",
             LanguageType.PYTHON: "pip install -r requirements.txt",
-            LanguageType.POMEGRANATE: "pomegranate install"
+            LanguageType.MYNDRA: "myndra install"
         }
         return commands.get(language, "echo 'No install command'")
     
@@ -680,7 +680,7 @@ pipeline {{
             LanguageType.GO: "go build -o bin/app",
             LanguageType.TYPESCRIPT: "npm run build",
             LanguageType.PYTHON: "python -m build",
-            LanguageType.POMEGRANATE: "pomegranate build --release"
+            LanguageType.MYNDRA: "myndra build --release"
         }
         return commands.get(language, "echo 'No build command'")
     
@@ -691,7 +691,7 @@ pipeline {{
             LanguageType.GO: "go test ./...",
             LanguageType.TYPESCRIPT: "npm test",
             LanguageType.PYTHON: "pytest",
-            LanguageType.POMEGRANATE: "pomegranate test"
+            LanguageType.MYNDRA: "myndra test"
         }
         return commands.get(language, "echo 'No test command'")
     
@@ -702,7 +702,7 @@ pipeline {{
             LanguageType.GO: "golangci-lint run",
             LanguageType.TYPESCRIPT: "npm run lint",
             LanguageType.PYTHON: "flake8 .",
-            LanguageType.POMEGRANATE: "pomegranate lint"
+            LanguageType.MYNDRA: "myndra lint"
         }
         return commands.get(language, "echo 'No lint command'")
     
@@ -713,7 +713,7 @@ pipeline {{
             LanguageType.GO: "golang:1.21",
             LanguageType.TYPESCRIPT: "node:18",
             LanguageType.PYTHON: "python:3.11",
-            LanguageType.POMEGRANATE: "ubuntu:22.04"
+            LanguageType.MYNDRA: "ubuntu:22.04"
         }
         return images.get(language, "ubuntu:22.04")
     

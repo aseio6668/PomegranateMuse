@@ -1,5 +1,5 @@
 """
-Cost Analysis Module for PomegranteMuse
+Cost Analysis Module for MyndraComposer
 Provides comprehensive cost analysis and optimization for cloud infrastructure and ML usage
 """
 

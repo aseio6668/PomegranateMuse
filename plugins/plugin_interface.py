@@ -1,5 +1,5 @@
 """
-Plugin Interfaces for PomegranteMuse
+Plugin Interfaces for MyndraComposer
 Defines abstract interfaces that plugins must implement
 """
 

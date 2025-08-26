@@ -1,5 +1,5 @@
 """
-Plugin Architecture for PomegranteMuse
+Plugin Architecture for MyndraComposer
 Provides extensible plugin system for adding custom functionality
 """
 

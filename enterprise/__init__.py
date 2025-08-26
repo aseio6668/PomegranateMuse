@@ -1,5 +1,5 @@
 """
-Enterprise Integration Module for PomegranteMuse
+Enterprise Integration Module for MyndraComposer
 Provides comprehensive enterprise system integrations including authentication,
 project management, communication platforms, and monitoring systems
 """

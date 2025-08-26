@@ -113,7 +113,7 @@ class BuildMatrix:
         
         # Language compatibility matrix
         self.language_platform_compatibility = {
-            "pomegranate": {
+            "myndra": {
                 "windows": True,
                 "linux": True,
                 "darwin": True
@@ -578,7 +578,7 @@ class CrossPlatformTester:
                                               languages: List[str] = None) -> MatrixExecutionResult:
         """Test cross-platform compatibility for specified languages"""
         if languages is None:
-            languages = ["pomegranate", "rust", "go"]
+            languages = ["myndra", "rust", "go"]
         
         # Create matrix configuration for cross-platform testing
         config = MatrixConfiguration(
@@ -670,7 +670,7 @@ async def generate_build_matrix(project_path: Path, languages: List[str] = None,
                               strategy: MatrixStrategy = MatrixStrategy.MINIMAL) -> MatrixExecutionResult:
     """Generate and execute build matrix"""
     if languages is None:
-        languages = ["pomegranate"]
+        languages = ["myndra"]
     
     matrix = BuildMatrix()
     

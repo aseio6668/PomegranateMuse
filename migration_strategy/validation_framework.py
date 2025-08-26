@@ -1,5 +1,5 @@
 """
-Migration Validation Framework for PomegranteMuse
+Migration Validation Framework for MyndraComposer
 Validates migration results for correctness, performance, and compatibility
 """
 

@@ -2,7 +2,7 @@
     "name": "ollama_provider",
     "version": "1.0.0",
     "description": "Ollama ML provider plugin for local model inference",
-    "author": "PomegranteMuse Team",
+    "author": "MyndraComposer Team",
     "plugin_type": "ml_provider",
     "entry_point": "ollama_plugin",
     "dependencies": [],

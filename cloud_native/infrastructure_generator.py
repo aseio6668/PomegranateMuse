@@ -1452,7 +1452,7 @@ resource "aws_ecr_repository" "app" {{
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "pomegranate-app"
+  default     = "myndra-app"
 }
 
 variable "vpc_cidr" {

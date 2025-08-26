@@ -1,5 +1,5 @@
 """
-Benchmarking Module for PomegranteMuse
+Benchmarking Module for MyndraComposer
 Provides comprehensive performance analysis and benchmarking capabilities
 """
 
@@ -9,7 +9,7 @@ from .performance_analyzer import (
     BenchmarkResult,
     PerformanceMetrics,
     SystemMonitor,
-    benchmark_pomegranate_compilation,
+    benchmark_myndra_compilation,
     benchmark_full_translation_pipeline
 )
 
@@ -25,7 +25,7 @@ __all__ = [
     "BenchmarkResult", 
     "PerformanceMetrics",
     "SystemMonitor",
-    "benchmark_pomegranate_compilation",
+    "benchmark_myndra_compilation",
     "benchmark_full_translation_pipeline",
     "BenchmarkIntegration",
     "BenchmarkSuite",

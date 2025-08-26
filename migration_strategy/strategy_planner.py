@@ -1,5 +1,5 @@
 """
-Migration Strategy Planner for PomegranteMuse
+Migration Strategy Planner for MyndraComposer
 Creates comprehensive migration plans based on codebase analysis
 """
 

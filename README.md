@@ -1,16 +1,16 @@
-# PomegranteMuse 🍎
+# MyndraComposer 🍎
 
-An AI-powered cross-platform tool that analyzes source code files and translates them into idiomatic [Pomegranate programming language](../Pomegrante2[c]/) code using machine learning techniques.
+An AI-powered cross-platform tool that analyzes source code files and translates them into idiomatic [Myndra programming language](../Myndra2[c]/) code using machine learning techniques.
 
 ## Features
 
 - **Multi-language Analysis**: Supports 20+ programming languages including Python, JavaScript, Java, C++, Rust, Go, and more
-- **ML-Powered Translation**: Uses Ollama models (with extensible support for other providers) to understand code semantics and generate appropriate Pomegranate code
+- **ML-Powered Translation**: Uses Ollama models (with extensible support for other providers) to understand code semantics and generate appropriate Myndra code
 - **Interactive CLI**: Claude Code-style interactive assistant for guided code generation
 - **Project State Management**: Persistent `.pomuse` folders for continuing work across sessions
 - **Cross-Platform**: Works on Windows, Linux, macOS, and BSD systems
 - **Domain Detection**: Automatically identifies code domains (web dev, math/scientific, data processing, etc.)
-- **Smart Templates**: Context-aware code generation using appropriate Pomegranate patterns
+- **Smart Templates**: Context-aware code generation using appropriate Myndra patterns
 
 ## Quick Start
 
@@ -27,7 +27,7 @@ An AI-powered cross-platform tool that analyzes source code files and translates
    ollama serve
    ```
 
-3. **Start PomegranteMuse**:
+3. **Start MyndraComposer**:
    ```bash
    python pomuse.py
    ```
@@ -37,7 +37,7 @@ An AI-powered cross-platform tool that analyzes source code files and translates
    pomuse> analyze ./src
    ```
 
-5. **Generate Pomegranate code**:
+5. **Generate Myndra code**:
    ```
    pomuse> generate "create a robust math framework from these files"
    ```
@@ -45,7 +45,7 @@ An AI-powered cross-platform tool that analyzes source code files and translates
 ## Commands
 
 - `analyze [path]` - Analyze source code files in the specified directory
-- `generate "<prompt>"` - Generate Pomegranate code based on analysis and your prompt
+- `generate "<prompt>"` - Generate Myndra code based on analysis and your prompt
 - `continue` - Resume work from a previous session (uses `.pomuse` state)
 - `status` - Show current project status and configuration
 - `help` - Show available commands
@@ -53,13 +53,13 @@ An AI-powered cross-platform tool that analyzes source code files and translates
 
 ## Project Structure
 
-When you run PomegranteMuse in a directory, it creates a `.pomuse` folder containing:
+When you run MyndraComposer in a directory, it creates a `.pomuse` folder containing:
 
 ```
 .pomuse/
 ├── project_state.json     # Project configuration and history
 ├── conversations/         # Chat history and context
-└── outputs/              # Generated Pomegranate files
+└── outputs/              # Generated Myndra files
 ```
 
 ## Example Workflow
@@ -68,14 +68,14 @@ When you run PomegranteMuse in a directory, it creates a `.pomuse` folder contai
 # 1. Navigate to your project directory
 cd /path/to/your/code
 
-# 2. Start PomegranteMuse
+# 2. Start MyndraComposer
 python /path/to/pomuse.py
 
 # 3. Analyze existing code
 pomuse> analyze .
 
-# 4. Generate Pomegranate equivalent
-pomuse> generate "these files implement a web API - create a Pomegranate version with reactive UI and capability-based security"
+# 4. Generate Myndra equivalent
+pomuse> generate "these files implement a web API - create a Myndra version with reactive UI and capability-based security"
 
 # 5. Continue working later
 pomuse> continue
@@ -94,7 +94,7 @@ pomuse> continue
 
 ## Configuration
 
-PomegranteMuse stores configuration in `.pomuse/project_state.json`:
+MyndraComposer stores configuration in `.pomuse/project_state.json`:
 
 ```json
 {
@@ -107,9 +107,9 @@ PomegranteMuse stores configuration in `.pomuse/project_state.json`:
 }
 ```
 
-## Integration with Pomegranate
+## Integration with Myndra
 
-Generated code uses modern Pomegranate features:
+Generated code uses modern Myndra features:
 
 - **Reactive Programming**: `@reactive` functions and observables
 - **Temporal Types**: `evolving<T>` for animations and state transitions  
@@ -124,12 +124,12 @@ Generated code uses modern Pomegranate features:
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   File System   │    │   ML Provider    │    │   Pomegranate   │
+│   File System   │    │   ML Provider    │    │   Myndra        │
 │                 │    │   (Ollama)       │    │   Generator     │
 │ ┌─────────────┐ │    │                  │    │                 │
 │ │Source Files │ │──▶ │ ┌──────────────┐ │──▶ │ ┌─────────────┐ │
 │ └─────────────┘ │    │ │Code Analysis │ │    │ │Generated    │ │
-│                 │    │ │& Translation │ │    │ │.pom Files   │ │
+│                 │    │ │& Translation │ │    │ │.myn Files   │ │
 └─────────────────┘    │ └──────────────┘ │    │ └─────────────┘ │
                        └──────────────────┘    └─────────────────┘
                                 ▲
@@ -152,14 +152,14 @@ Generated code uses modern Pomegranate features:
 
 ## Contributing
 
-PomegranteMuse is designed to be extensible. Key areas for contribution:
+MyndraComposer is designed to be extensible. Key areas for contribution:
 
 1. **Language Support**: Add new source language analyzers
 2. **ML Providers**: Integrate additional AI model providers  
-3. **Templates**: Create domain-specific Pomegranate code templates
+3. **Templates**: Create domain-specific Myndra code templates
 4. **Analysis**: Improve semantic code understanding
 5. **Testing**: Add comprehensive test coverage
 
 ## License
 
-This project is part of the Pomegranate ecosystem. See the main Pomegranate repository for licensing information.
+This project is part of the Myndra ecosystem. See the main Myndra repository for licensing information.

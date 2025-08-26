@@ -1,5 +1,5 @@
 """
-Enterprise Manager for PomegranteMuse
+Enterprise Manager for MyndraComposer
 Orchestrates all enterprise integrations and provides unified configuration
 """
 
@@ -301,13 +301,13 @@ class EnterpriseManager:
             try:
                 # Track project creation metrics
                 self.monitoring_manager.collector.increment_counter(
-                    "pomegrantemuse.projects.created",
+                    "myndra.projects.created",
                     1,
                     {"source_language": source_language, "target_language": target_language}
                 )
                 
                 self.monitoring_manager.collector.set_gauge(
-                    "pomegrantemuse.project.files_count",
+                    "myndra.project.files_count",
                     len(file_paths),
                     {"project": project_name}
                 )
@@ -617,7 +617,7 @@ async def run_enterprise_setup_interactive() -> EnterpriseManager:
         elif monitoring_choice == "3":
             config.monitoring["prometheus"] = {
                 "pushgateway_url": input("Pushgateway URL (http://localhost:9091): ").strip() or "http://localhost:9091",
-                "job_name": "pomegrantemuse"
+                "job_name": "myndra"
             }
     
     # Create and initialize manager

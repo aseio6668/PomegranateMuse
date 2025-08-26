@@ -1,5 +1,5 @@
 """
-Ollama ML Provider Plugin for PomegranteMuse
+Ollama ML Provider Plugin for MyndraComposer
 Provides integration with Ollama for local model inference
 """
 
@@ -101,7 +101,7 @@ class OllamaProviderPlugin(BasePlugin, IMLProviderPlugin):
     def _build_system_prompt(self, context: Dict[str, Any]) -> str:
         """Build system prompt for code generation"""
         source_lang = context.get("source_language", "unknown")
-        target_lang = context.get("target_language", "pomegranate")
+        target_lang = context.get("target_language", "myndra")
         
         prompt = f"""You are an expert programmer specializing in code translation and generation.
 Your task is to translate code from {source_lang} to {target_lang}.

@@ -1,5 +1,5 @@
 """
-Performance Benchmarking System for PomegranteMuse
+Performance Benchmarking System for MyndraComposer
 Provides comprehensive performance analysis and benchmarking capabilities
 """
 
@@ -606,13 +606,13 @@ asyncio.run(test_inference())
 
 
 # Convenience functions for common benchmarks
-async def benchmark_pomegranate_compilation(pom_file: str, iterations: int = 3) -> BenchmarkResult:
-    """Benchmark Pomegranate compilation performance"""
+async def benchmark_myndra_compilation(pom_file: str, iterations: int = 3) -> BenchmarkResult:
+    """Benchmark Myndra compilation performance"""
     benchmarker = PerformanceBenchmarker()
     
     config = BenchmarkConfig(
-        test_name="pomegranate_compilation",
-        target_executable="pomegranate",
+        test_name="myndra_compilation",
+        target_executable="myndra",
         arguments=["build", pom_file],
         benchmark_runs=iterations
     )

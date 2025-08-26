@@ -1,5 +1,5 @@
 """
-Monitoring and Observability Integration for PomegranteMuse
+Monitoring and Observability Integration for MyndraComposer
 Integrates with Datadog, New Relic, Prometheus, and other monitoring platforms
 """
 
@@ -303,7 +303,7 @@ class PrometheusIntegration(MonitoringIntegration):
     def __init__(self, config: Dict[str, Any]):
         super().__init__(config)
         self.pushgateway_url = config.get("pushgateway_url", "http://localhost:9091")
-        self.job_name = config.get("job_name", "pomegrantemuse")
+        self.job_name = config.get("job_name", "myndra")
         
     async def send_metric(self, metric: Metric) -> bool:
         """Send metric to Prometheus pushgateway"""
@@ -558,14 +558,14 @@ class MonitoringManager:
         """Track build-related metrics"""
         tags = {"project": project, "language": language}
         
-        self.collector.increment_counter("pomegrantemuse.builds.total", 1, tags)
+        self.collector.increment_counter("myndra.builds.total", 1, tags)
         
         if success:
-            self.collector.increment_counter("pomegrantemuse.builds.success", 1, tags)
+            self.collector.increment_counter("myndra.builds.success", 1, tags)
         else:
-            self.collector.increment_counter("pomegrantemuse.builds.failure", 1, tags)
+            self.collector.increment_counter("myndra.builds.failure", 1, tags)
             
-        self.collector.record_timing("pomegrantemuse.build.duration", duration, tags)
+        self.collector.record_timing("myndra.build.duration", duration, tags)
     
     def track_migration_metrics(self, files_processed: int, 
                               source_lang: str, target_lang: str,
@@ -576,10 +576,10 @@ class MonitoringManager:
             "target_language": target_lang
         }
         
-        self.collector.increment_counter("pomegrantemuse.migrations.total", 1, tags)
-        self.collector.set_gauge("pomegrantemuse.migration.files_processed", files_processed, tags)
-        self.collector.set_gauge("pomegrantemuse.migration.errors", errors, tags)
-        self.collector.record_timing("pomegrantemuse.migration.duration", duration, tags)
+        self.collector.increment_counter("myndra.migrations.total", 1, tags)
+        self.collector.set_gauge("myndra.migration.files_processed", files_processed, tags)
+        self.collector.set_gauge("myndra.migration.errors", errors, tags)
+        self.collector.record_timing("myndra.migration.duration", duration, tags)
     
     def track_security_metrics(self, vulnerabilities_found: int, 
                              severity_counts: Dict[str, int],
@@ -587,12 +587,12 @@ class MonitoringManager:
         """Track security-related metrics"""
         base_tags = {"project": project}
         
-        self.collector.set_gauge("pomegrantemuse.security.vulnerabilities.total", 
+        self.collector.set_gauge("myndra.security.vulnerabilities.total", 
                                vulnerabilities_found, base_tags)
         
         for severity, count in severity_counts.items():
             tags = {**base_tags, "severity": severity}
-            self.collector.set_gauge("pomegrantemuse.security.vulnerabilities.by_severity", 
+            self.collector.set_gauge("myndra.security.vulnerabilities.by_severity", 
                                    count, tags)
     
     def setup_default_alerts(self):
@@ -600,7 +600,7 @@ class MonitoringManager:
         alerts = [
             Alert(
                 name="Build Failure Rate High",
-                metric_name="pomegrantemuse.builds.failure_rate",
+                metric_name="myndra.builds.failure_rate",
                 condition="> 0.2",
                 threshold=0.2,
                 severity=AlertSeverity.WARNING,
@@ -608,7 +608,7 @@ class MonitoringManager:
             ),
             Alert(
                 name="Build Duration High",
-                metric_name="pomegrantemuse.build.duration",
+                metric_name="myndra.build.duration",
                 condition="> 300",
                 threshold=300,
                 severity=AlertSeverity.WARNING,
@@ -616,7 +616,7 @@ class MonitoringManager:
             ),
             Alert(
                 name="Critical Vulnerabilities Found",
-                metric_name="pomegrantemuse.security.vulnerabilities.critical",
+                metric_name="myndra.security.vulnerabilities.critical",
                 condition="> 0",
                 threshold=0,
                 severity=AlertSeverity.CRITICAL,
@@ -630,36 +630,36 @@ class MonitoringManager:
     def create_default_dashboard(self) -> Dashboard:
         """Create default monitoring dashboard"""
         dashboard = MonitoringDashboard(
-            "PomegranteMuse Monitoring",
-            "Main monitoring dashboard for PomegranteMuse operations"
+            "MyndraComposer Monitoring",
+            "Main monitoring dashboard for MyndraComposer operations"
         )
         
         # Build metrics
         dashboard.add_timeseries_widget(
             "Build Success Rate",
-            ["pomegrantemuse.builds.success_rate"]
+            ["myndra.builds.success_rate"]
         )
         
         dashboard.add_query_value_widget(
             "Total Builds Today",
-            "pomegrantemuse.builds.total"
+            "myndra.builds.total"
         )
         
         # Migration metrics
         dashboard.add_timeseries_widget(
             "Files Migrated",
-            ["pomegrantemuse.migration.files_processed"]
+            ["myndra.migration.files_processed"]
         )
         
         dashboard.add_heatmap_widget(
             "Migration Duration Distribution",
-            "pomegrantemuse.migration.duration"
+            "myndra.migration.duration"
         )
         
         # Security metrics
         dashboard.add_timeseries_widget(
             "Security Vulnerabilities",
-            ["pomegrantemuse.security.vulnerabilities.total"]
+            ["myndra.security.vulnerabilities.total"]
         )
         
         return dashboard.to_dashboard()

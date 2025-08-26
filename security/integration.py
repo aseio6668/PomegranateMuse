@@ -1,5 +1,5 @@
 """
-Security Integration Module for PomegranteMuse
+Security Integration Module for MyndraComposer
 Integrates security analysis with code generation and project management
 """
 
@@ -554,7 +554,7 @@ async def run_security_scan_interactive(project_root: str):
     """Interactive security scan runner"""
     integration = SecurityIntegration(project_root)
     
-    print("🔒 PomegranteMuse Security Analysis")
+    print("🔒 MyndraComposer Security Analysis")
     print("=" * 50)
     
     # Scan options

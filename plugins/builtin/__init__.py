@@ -1,5 +1,5 @@
 """
-Built-in Plugins for PomegranteMuse
+Built-in Plugins for MyndraComposer
 Core plugins that come pre-installed with the platform
 """
 

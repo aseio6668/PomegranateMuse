@@ -1,5 +1,5 @@
 """
-Automated Testing Suite for PomegranteMuse
+Automated Testing Suite for MyndraComposer
 Comprehensive test coverage for the entire platform
 """
 

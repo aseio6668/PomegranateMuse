@@ -48,31 +48,31 @@ class LanguageBuilder(ABC):
         """Clean up after build (optional)"""
         pass
 
-class PomegranateBuilder(LanguageBuilder):
-    """Builder for Pomegranate language"""
+class MyndraBuilder(LanguageBuilder):
+    """Builder for Myndra language"""
     
     def __init__(self):
         config = LanguageConfig(
-            name="pomegranate",
-            file_extensions=[".pomeg", ".pom"],
-            build_command="pomeg build --release",
-            test_command="pomeg test --verbose",
-            package_manager="pomeg",
-            dependency_file="pomeg.toml",
+            name="myndra",
+            file_extensions=[".myn"],
+            build_command="myndra build --release",
+            test_command="myndra test --verbose",
+            package_manager="myndra",
+            dependency_file="myndra.toml",
             supports_cross_compilation=True
         )
         super().__init__(config)
     
     async def prepare_build(self, project_path: Path, environment: BuildEnvironment) -> bool:
-        """Prepare Pomegranate project for building"""
+        """Prepare Myndra project for building"""
         try:
-            # Check for pomeg.toml
-            config_file = project_path / "pomeg.toml"
+            # Check for myndra.toml
+            config_file = project_path / "myndra.toml"
             if not config_file.exists():
-                # Create basic pomeg.toml
+                # Create basic myndra.toml
                 config_content = """
 [project]
-name = "pomegranate-project"
+name = "myndra-project"
 version = "0.1.0"
 language-version = "1.0"
 
@@ -89,10 +89,10 @@ optimization = "release"
                 with open(config_file, 'w') as f:
                     f.write(config_content.strip())
                     
-                self.logger.info("Created basic pomeg.toml configuration")
+                self.logger.info("Created basic myndra.toml configuration")
             
             # Initialize project if needed
-            init_cmd = ["pomeg", "init", "--name", project_path.name]
+            init_cmd = ["myndra", "init", "--name", project_path.name]
             process = await asyncio.create_subprocess_exec(
                 *init_cmd,
                 cwd=project_path,
@@ -104,14 +104,14 @@ optimization = "release"
             return True
             
         except Exception as e:
-            self.logger.error(f"Failed to prepare Pomegranate build: {e}")
+            self.logger.error(f"Failed to prepare Myndra build: {e}")
             return False
     
     async def run_build(self, project_path: Path, environment: BuildEnvironment) -> Tuple[bool, str]:
-        """Run Pomegranate build"""
+        """Run Myndra build"""
         try:
             # Set target architecture if cross-compiling
-            build_cmd = ["pomeg", "build"]
+            build_cmd = ["myndra", "build"]
             
             if environment.architecture != "native":
                 build_cmd.extend(["--target", environment.architecture])
@@ -123,8 +123,8 @@ optimization = "release"
             
             # Set environment variables
             env = {
-                "POMEG_LOG": "info",
-                "POMEG_PARALLEL": "true",
+                "MYNDRA_LOG": "info",
+                "MYNDRA_PARALLEL": "true",
                 **environment.environment_vars
             }
             
@@ -146,7 +146,7 @@ optimization = "release"
             return False, f"Build execution error: {e}"
     
     async def run_tests(self, project_path: Path, environment: BuildEnvironment) -> List[TestResult]:
-        """Run Pomegranate tests"""
+        """Run Myndra tests"""
         test_results = []
         
         # Unit tests
@@ -165,13 +165,13 @@ optimization = "release"
     
     async def _run_test_type(self, project_path: Path, environment: BuildEnvironment, 
                             test_type: str) -> TestResult:
-        """Run specific type of Pomegranate tests"""
+        """Run specific type of Myndra tests"""
         from datetime import datetime
         
         start_time = datetime.now()
         
         try:
-            test_cmd = ["pomeg", "test", f"--{test_type}", "--verbose"]
+            test_cmd = ["myndra", "test", f"--{test_type}", "--verbose"]
             
             process = await asyncio.create_subprocess_exec(
                 *test_cmd,
@@ -188,7 +188,7 @@ optimization = "release"
             status = BuildStatus.SUCCESS if process.returncode == 0 else BuildStatus.FAILURE
             
             return TestResult(
-                name=f"pomegranate_{test_type}_tests",
+                name=f"myndra_{test_type}_tests",
                 test_type=TestType(test_type.lower()),
                 status=status,
                 duration=duration,
@@ -198,7 +198,7 @@ optimization = "release"
         except Exception as e:
             duration = (datetime.now() - start_time).total_seconds()
             return TestResult(
-                name=f"pomegranate_{test_type}_tests",
+                name=f"myndra_{test_type}_tests",
                 test_type=TestType(test_type.lower()),
                 status=BuildStatus.ERROR,
                 duration=duration,
@@ -206,9 +206,9 @@ optimization = "release"
             )
     
     async def check_dependencies(self, project_path: Path) -> Dict[str, Any]:
-        """Check Pomegranate dependencies"""
+        """Check Myndra dependencies"""
         try:
-            check_cmd = ["pomeg", "check", "--dependencies"]
+            check_cmd = ["myndra", "check", "--dependencies"]
             
             process = await asyncio.create_subprocess_exec(
                 *check_cmd,
@@ -897,7 +897,7 @@ class CSharpBuilder(LanguageBuilder):
 def get_builder_for_language(language: str) -> Optional[LanguageBuilder]:
     """Get the appropriate builder for a language"""
     builders = {
-        "pomegranate": PomegranateBuilder,
+        "myndra": MyndraBuilder,
         "rust": RustBuilder,
         "go": GoBuilder,
         "typescript": TypeScriptBuilder,

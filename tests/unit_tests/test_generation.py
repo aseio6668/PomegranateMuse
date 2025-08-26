@@ -14,10 +14,10 @@ class MockCodeGenerator:
         self.generators = {}
         self.generation_cache = {}
         self.supported_languages = {
-            "python": ["pomegranate", "rust", "go", "typescript"],
-            "javascript": ["typescript", "python", "pomegranate"],
-            "java": ["kotlin", "scala", "python", "pomegranate"],
-            "cpp": ["rust", "go", "python", "pomegranate"]
+            "python": ["myndra", "rust", "go", "typescript"],
+            "javascript": ["typescript", "python", "myndra"],
+            "java": ["kotlin", "scala", "python", "myndra"],
+            "cpp": ["rust", "go", "python", "myndra"]
         }
     
     def register_generator(self, source_lang, target_lang, generator):
@@ -66,8 +66,8 @@ class MockCodeGenerator:
     
     def _mock_translate(self, source_code, source_language, target_language):
         """Mock code translation logic"""
-        if source_language == "python" and target_language == "pomegranate":
-            return self._python_to_pomegranate(source_code)
+        if source_language == "python" and target_language == "myndra":
+            return self._python_to_myndra(source_code)
         elif source_language == "python" and target_language == "rust":
             return self._python_to_rust(source_code)
         elif source_language == "javascript" and target_language == "typescript":
@@ -76,8 +76,8 @@ class MockCodeGenerator:
             # Generic translation
             return f"// Translated from {source_language} to {target_language}\n" + source_code
     
-    def _python_to_pomegranate(self, code):
-        """Mock Python to Pomegranate translation"""
+    def _python_to_myndra(self, code):
+        """Mock Python to Myndra translation"""
         lines = code.split('\n')
         translated_lines = []
         
@@ -277,14 +277,14 @@ console.log(doubled);
     def test_basic_code_generation(self):
         """Test basic code generation functionality"""
         result = self.generator.generate_code(
-            self.python_function, "python", "pomegranate"
+            self.python_function, "python", "myndra"
         )
         
         self.assertTrue(result["success"])
         self.assertIn("generated_code", result)
         self.assertNotEqual(result["generated_code"], "")
         self.assertEqual(result["source_language"], "python")
-        self.assertEqual(result["target_language"], "pomegranate")
+        self.assertEqual(result["target_language"], "myndra")
     
     def test_unsupported_language_pair(self):
         """Test handling of unsupported language pairs"""
@@ -296,16 +296,16 @@ console.log(doubled);
         self.assertIn("error", result)
         self.assertIn("not supported", result["error"])
     
-    def test_python_to_pomegranate_translation(self):
-        """Test Python to Pomegranate translation"""
+    def test_python_to_myndra_translation(self):
+        """Test Python to Myndra translation"""
         result = self.generator.generate_code(
-            self.python_function, "python", "pomegranate"
+            self.python_function, "python", "myndra"
         )
         
         self.assertTrue(result["success"])
         generated = result["generated_code"]
         
-        # Check for Pomegranate syntax elements
+        # Check for Myndra syntax elements
         self.assertIn("fn fibonacci", generated)
         self.assertIn("fn factorial", generated)
         self.assertIn("return", generated)
@@ -339,7 +339,7 @@ console.log(doubled);
     def test_generation_metadata(self):
         """Test generation metadata"""
         result = self.generator.generate_code(
-            self.python_function, "python", "pomegranate"
+            self.python_function, "python", "myndra"
         )
         
         self.assertIn("metadata", result)
@@ -354,7 +354,7 @@ console.log(doubled);
         """Test confidence scoring"""
         # Simple code should have high confidence
         simple_result = self.generator.generate_code(
-            "print('hello')", "python", "pomegranate"
+            "print('hello')", "python", "myndra"
         )
         
         # Complex code should have lower confidence
@@ -373,7 +373,7 @@ def complex_function(data):
         """
         
         complex_result = self.generator.generate_code(
-            complex_code, "python", "pomegranate"
+            complex_code, "python", "myndra"
         )
         
         self.assertIn("confidence", simple_result)
@@ -389,7 +389,7 @@ def dangerous_function(user_input):
         """
         
         result = self.generator.generate_code(
-            security_code, "python", "pomegranate"
+            security_code, "python", "myndra"
         )
         
         self.assertIn("warnings", result)
@@ -408,7 +408,7 @@ def dangerous_function(user_input):
     def test_generation_statistics(self):
         """Test generation statistics calculation"""
         result = self.generator.generate_code(
-            self.python_function, "python", "pomegranate"
+            self.python_function, "python", "myndra"
         )
         
         self.assertIn("statistics", result)
@@ -428,10 +428,10 @@ def dangerous_function(user_input):
         """Test generation result caching"""
         # Generate same code twice
         result1 = self.generator.generate_code(
-            self.python_function, "python", "pomegranate"
+            self.python_function, "python", "myndra"
         )
         result2 = self.generator.generate_code(
-            self.python_function, "python", "pomegranate"
+            self.python_function, "python", "myndra"
         )
         
         # Results should be identical (from cache)
@@ -456,7 +456,7 @@ def dangerous_function(user_input):
         }
         
         result = self.generator.generate_code(
-            self.python_function, "python", "pomegranate", context
+            self.python_function, "python", "myndra", context
         )
         
         self.assertTrue(result["success"])
@@ -490,7 +490,7 @@ def dangerous_function(user_input):
     def test_class_translation(self):
         """Test class-based code translation"""
         result = self.generator.generate_code(
-            self.python_class, "python", "pomegranate"
+            self.python_class, "python", "myndra"
         )
         
         self.assertTrue(result["success"])
@@ -506,7 +506,7 @@ def dangerous_function(user_input):
             *[(i, i) for i in range(150)]
         )
         
-        result = self.generator.generate_code(large_code, "python", "pomegranate")
+        result = self.generator.generate_code(large_code, "python", "myndra")
         
         self.assertTrue(result["success"])
         
@@ -522,15 +522,15 @@ def dangerous_function(user_input):
     def test_empty_code_handling(self):
         """Test handling of empty or minimal code"""
         # Empty code
-        empty_result = self.generator.generate_code("", "python", "pomegranate")
+        empty_result = self.generator.generate_code("", "python", "myndra")
         self.assertTrue(empty_result["success"])
         
         # Whitespace only
-        whitespace_result = self.generator.generate_code("   \n  \n", "python", "pomegranate")
+        whitespace_result = self.generator.generate_code("   \n  \n", "python", "myndra")
         self.assertTrue(whitespace_result["success"])
         
         # Single line
-        single_result = self.generator.generate_code("x = 5", "python", "pomegranate")
+        single_result = self.generator.generate_code("x = 5", "python", "myndra")
         self.assertTrue(single_result["success"])
     
     def test_concurrent_generation(self):
@@ -546,7 +546,7 @@ def dangerous_function(user_input):
         # Run multiple generations concurrently
         threads = []
         test_cases = [
-            (self.python_function, "python", "pomegranate"),
+            (self.python_function, "python", "myndra"),
             (self.python_class, "python", "rust"),
             (self.javascript_code, "javascript", "typescript")
         ]

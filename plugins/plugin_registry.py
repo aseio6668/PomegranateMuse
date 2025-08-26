@@ -1,5 +1,5 @@
 """
-Plugin Registry for PomegranteMuse
+Plugin Registry for MyndraComposer
 Handles plugin discovery, registration, and metadata management
 """
 
@@ -105,7 +105,7 @@ class PluginRegistry:
         if config_manager:
             self.plugin_dir = Path(config_manager.config_dir) / "plugins"
         else:
-            self.plugin_dir = Path.home() / ".pomegrantemuse" / "plugins"
+            self.plugin_dir = Path.home() / ".myndra" / "plugins"
         
         self.plugin_dir.mkdir(parents=True, exist_ok=True)
         
@@ -120,11 +120,11 @@ class PluginRegistry:
         default_repos = [
             {
                 "name": "official",
-                "url": "https://plugins.pomegrantemuse.dev"
+                "url": "https://plugins.myndra.dev"
             },
             {
                 "name": "community", 
-                "url": "https://community-plugins.pomegrantemuse.dev"
+                "url": "https://community-plugins.myndra.dev"
             }
         ]
         

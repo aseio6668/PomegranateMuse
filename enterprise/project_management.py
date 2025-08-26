@@ -1,5 +1,5 @@
 """
-Project Management Integration for PomegranteMuse
+Project Management Integration for MyndraComposer
 Integrates with Jira, Azure DevOps, Trello, and other project management systems
 """
 

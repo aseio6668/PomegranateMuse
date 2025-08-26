@@ -1,6 +1,6 @@
 """
 Core Functionality Unit Tests
-Tests for the main PomegranteMuse core components
+Tests for the main MyndraComposer core components
 """
 
 import unittest
@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch, MagicMock
 # Assuming the main components are available for import
 # In a real scenario, these would be the actual imports
 class MockPomuseManager:
-    """Mock PomegranteMuse manager for testing"""
+    """Mock MyndraComposer manager for testing"""
     def __init__(self):
         self.projects = {}
         self.plugins = {}
@@ -35,7 +35,7 @@ class MockPomuseManager:
         return list(self.projects.values())
 
 class CoreUnitTests(unittest.TestCase):
-    """Unit tests for core PomegranteMuse functionality"""
+    """Unit tests for core MyndraComposer functionality"""
     
     def setUp(self):
         """Set up test environment"""
@@ -89,14 +89,14 @@ class MathUtils {
             name="Test Project",
             description="A test project",
             source_language="python",
-            target_language="pomegranate",
+            target_language="myndra",
             source_path=str(self.source_dir)
         )
         
         self.assertIsNotNone(project)
         self.assertEqual(project.name, "Test Project")
         self.assertEqual(project.source_language, "python")
-        self.assertEqual(project.target_language, "pomegranate")
+        self.assertEqual(project.target_language, "myndra")
         self.assertEqual(project.source_path, str(self.source_dir))
     
     def test_project_retrieval(self):
@@ -158,7 +158,7 @@ class MathUtils {
         ]
         
         supported_target_languages = [
-            "pomegranate", "rust", "go", "typescript", "python"
+            "myndra", "rust", "go", "typescript", "python"
         ]
         
         # Test valid combinations
@@ -176,7 +176,7 @@ class MathUtils {
         project = self.pomuse_manager.create_project(
             name="Config Test",
             source_language="python",
-            target_language="pomegranate",
+            target_language="myndra",
             migration_strategy="incremental",
             quality_threshold=0.8
         )

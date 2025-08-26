@@ -1,5 +1,5 @@
 """
-Universal Build Testing System for PomegranteMuse
+Universal Build Testing System for MyndraComposer
 Provides comprehensive build testing across all supported languages and platforms
 """
 
@@ -17,7 +17,7 @@ from .universal_builder import (
 )
 
 from .language_builders import (
-    PomegranateBuilder,
+    MyndraBuilder,
     RustBuilder,
     GoBuilder,
     TypeScriptBuilder,
@@ -59,7 +59,7 @@ __all__ = [
     "run_universal_build",
     
     # Language-specific builders
-    "PomegranateBuilder",
+    "MyndraBuilder",
     "RustBuilder", 
     "GoBuilder",
     "TypeScriptBuilder",

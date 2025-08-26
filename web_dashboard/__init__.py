@@ -1,5 +1,5 @@
 """
-Web Dashboard for PomegranteMuse
+Web Dashboard for MyndraComposer
 Provides web-based interface for managing projects and monitoring progress
 """
 

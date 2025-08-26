@@ -1,5 +1,5 @@
 """
-CI/CD Module for PomegranteMuse
+CI/CD Module for MyndraComposer
 Provides comprehensive CI/CD pipeline generation and management
 """
 

@@ -1,5 +1,5 @@
 """
-Unit Tests for PomegranteMuse
+Unit Tests for MyndraComposer
 Tests individual components in isolation
 """
 

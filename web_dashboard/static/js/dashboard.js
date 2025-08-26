@@ -1,6 +1,6 @@
-// PomegranteMuse Dashboard JavaScript
+// MyndraComposer Dashboard JavaScript
 
-class PomegranateDashboard {
+class MyndraDashboard {
     constructor() {
         this.socket = null;
         this.isConnected = false;
@@ -233,7 +233,7 @@ class PomegranateDashboard {
                 icon: 'fas fa-plus',
                 iconClass: 'bg-primary text-white',
                 title: 'Project created',
-                description: 'New Python to Pomegranate project',
+                description: 'New Python to Myndra project',
                 time: '5 minutes ago'
             },
             {
@@ -459,5 +459,5 @@ window.openSettings = function() {
 
 // Initialize dashboard when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    window.dashboard = new PomegranateDashboard();
+    window.dashboard = new MyndraDashboard();
 });

@@ -1,5 +1,5 @@
 """
-Universal Builder System for PomegranteMuse
+Universal Builder System for MyndraComposer
 Provides unified build testing across all supported languages and platforms
 """
 
@@ -286,13 +286,13 @@ class UniversalBuilder:
     def _init_language_configs(self) -> Dict[str, LanguageConfig]:
         """Initialize language configurations"""
         return {
-            "pomegranate": LanguageConfig(
-                name="pomegranate",
-                file_extensions=[".pomeg", ".pom"],
-                build_command="pomeg build",
-                test_command="pomeg test",
-                package_manager="pomeg",
-                dependency_file="pomeg.toml",
+            "myndra": LanguageConfig(
+                name="myndra",
+                file_extensions=[".myn"],
+                build_command="myndra build",
+                test_command="myndra test",
+                package_manager="myndra",
+                dependency_file="myndra.toml",
                 supports_cross_compilation=True
             ),
             "rust": LanguageConfig(
@@ -361,7 +361,7 @@ class UniversalBuilder:
         return {
             "windows": PlatformConfig(
                 name="windows",
-                supported_languages=["pomegranate", "rust", "go", "typescript", "python", "java", "cpp", "csharp"],
+                supported_languages=["myndra", "rust", "go", "typescript", "python", "java", "cpp", "csharp"],
                 docker_images={
                     "rust": "rust:latest",
                     "go": "golang:latest", 
@@ -372,7 +372,7 @@ class UniversalBuilder:
             ),
             "linux": PlatformConfig(
                 name="linux",
-                supported_languages=["pomegranate", "rust", "go", "typescript", "python", "java", "cpp", "csharp"],
+                supported_languages=["myndra", "rust", "go", "typescript", "python", "java", "cpp", "csharp"],
                 docker_images={
                     "rust": "rust:latest",
                     "go": "golang:latest",
@@ -384,7 +384,7 @@ class UniversalBuilder:
             ),
             "darwin": PlatformConfig(
                 name="darwin",
-                supported_languages=["pomegranate", "rust", "go", "typescript", "python", "java", "cpp", "csharp"],
+                supported_languages=["myndra", "rust", "go", "typescript", "python", "java", "cpp", "csharp"],
                 docker_images={
                     "rust": "rust:latest",
                     "go": "golang:latest",
@@ -737,7 +737,7 @@ async def run_universal_build(project_path: Path, languages: List[str] = None,
     results = []
     
     if languages is None:
-        languages = ["pomegranate"]  # Default to Pomegranate
+        languages = ["myndra"]  # Default to Myndra
         
     if platforms is None:
         platforms = [platform.system().lower()]  # Current platform

@@ -1,5 +1,5 @@
 """
-Core Configuration Manager for PomegranteMuse
+Core Configuration Manager for MyndraComposer
 Handles loading, saving, and managing configuration files
 """
 
@@ -54,7 +54,7 @@ class ConfigManager:
     """Main configuration manager"""
     
     def __init__(self, config_dir: Optional[str] = None):
-        self.config_dir = Path(config_dir or Path.home() / ".pomegrantemuse")
+        self.config_dir = Path(config_dir or Path.home() / ".myndra")
         self.config_dir.mkdir(parents=True, exist_ok=True)
         
         self.logger = logging.getLogger(__name__)
@@ -171,8 +171,8 @@ class ConfigManager:
             },
             "languages": {
                 "supported_source": ["python", "javascript", "typescript", "java", "cpp", "csharp", "rust", "go"],
-                "supported_target": ["pomegranate", "rust", "go", "typescript", "python"],
-                "default_target": "pomegranate"
+                "supported_target": ["myndra", "rust", "go", "typescript", "python"],
+                "default_target": "myndra"
             },
             "build": {
                 "parallel_jobs": 4,

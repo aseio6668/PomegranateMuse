@@ -1,5 +1,5 @@
 """
-Team Integration Module for PomegranteMuse
+Team Integration Module for MyndraComposer
 Integrates team collaboration with code generation, security, and project management
 """
 
@@ -481,7 +481,7 @@ async def run_team_management_interactive(project_root: str):
     integration = TeamIntegration(project_root)
     team_manager = integration.team_manager
     
-    print("👥 PomegranteMuse Team Management")
+    print("👥 MyndraComposer Team Management")
     print("=" * 50)
     
     # Management options

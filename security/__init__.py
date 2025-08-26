@@ -1,5 +1,5 @@
 """
-Security Module for PomegranteMuse
+Security Module for MyndraComposer
 Provides comprehensive security analysis and vulnerability detection
 """
 

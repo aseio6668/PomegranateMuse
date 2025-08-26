@@ -1,5 +1,5 @@
 """
-Cost Analysis and Optimization System for PomegranteMuse
+Cost Analysis and Optimization System for MyndraComposer
 Provides comprehensive cost analysis for cloud infrastructure, ML usage, and development resources
 """
 

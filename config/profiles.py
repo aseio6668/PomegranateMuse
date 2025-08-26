@@ -1,5 +1,5 @@
 """
-Configuration Profiles for PomegranteMuse
+Configuration Profiles for MyndraComposer
 Allows users to switch between different configuration sets
 """
 

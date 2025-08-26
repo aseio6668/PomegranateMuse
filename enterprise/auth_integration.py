@@ -1,5 +1,5 @@
 """
-Enterprise Authentication Integration for PomegranteMuse
+Enterprise Authentication Integration for MyndraComposer
 Supports LDAP, SAML, OAuth, and other enterprise authentication systems
 """
 

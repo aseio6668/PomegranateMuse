@@ -1,5 +1,5 @@
 """
-API Routes for PomegranteMuse Web Dashboard
+API Routes for MyndraComposer Web Dashboard
 RESTful API endpoints for dashboard functionality
 """
 
@@ -97,7 +97,7 @@ class APIRoutes:
         """Get system information"""
         info = {
             "version": "1.0.0",
-            "platform": "PomegranteMuse",
+            "platform": "MyndraComposer",
             "dashboard_version": "1.0.0",
             "python_version": "3.x",
             "server_time": datetime.now().isoformat()
@@ -131,7 +131,7 @@ class APIRoutes:
     def list_projects(self):
         """List all projects"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         try:
             projects = self.pomuse_manager.list_projects()
@@ -158,7 +158,7 @@ class APIRoutes:
     def create_project(self):
         """Create new project"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         data = request.get_json()
         if not data:
@@ -192,7 +192,7 @@ class APIRoutes:
     def get_project(self, project_id):
         """Get project details"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         try:
             project = self.pomuse_manager.get_project(project_id)
@@ -222,7 +222,7 @@ class APIRoutes:
     def update_project(self, project_id):
         """Update project"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         data = request.get_json()
         if not data:
@@ -242,7 +242,7 @@ class APIRoutes:
     def delete_project(self, project_id):
         """Delete project"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         try:
             success = self.pomuse_manager.delete_project(project_id)
@@ -258,7 +258,7 @@ class APIRoutes:
     def analyze_project(self, project_id):
         """Analyze project code"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         data = request.get_json() or {}
         
@@ -278,7 +278,7 @@ class APIRoutes:
     def generate_code(self, project_id):
         """Generate code for project"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         data = request.get_json() or {}
         
@@ -298,7 +298,7 @@ class APIRoutes:
     def get_project_status(self, project_id):
         """Get project status"""
         if not self.pomuse_manager:
-            return create_response(error="PomegranteMuse manager not available", status_code=503)
+            return create_response(error="MyndraComposer manager not available", status_code=503)
         
         try:
             status = self.pomuse_manager.get_project_status(project_id)

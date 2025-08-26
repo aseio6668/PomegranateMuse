@@ -1,5 +1,5 @@
 """
-Ollama API client for PomegranteMuse
+Ollama API client for MyndraComposer
 Handles communication with Ollama models for code analysis and translation
 """
 
@@ -168,7 +168,7 @@ class CodeAnalysisPrompts:
     @staticmethod
     def analyze_file_content(file_path: str, content: str, language: str) -> str:
         """Generate prompt for analyzing a single file"""
-        return f"""You are an expert software engineer analyzing source code for translation to the Pomegranate programming language.
+        return f"""You are an expert software engineer analyzing source code for translation to the Myndra programming language.
 
 Analyze this {language} file and provide a structured analysis:
 
@@ -188,12 +188,12 @@ Please provide analysis in this JSON format:
     "complexity_level": "simple|intermediate|complex",
     "design_patterns": ["patterns", "used"],
     "domain_classification": ["web", "math", "data", "game", "etc"],
-    "pomegranate_features": ["reactive", "temporal", "security", "etc"],
-    "translation_approach": "How to best translate this to Pomegranate",
+    "myndra_features": ["reactive", "temporal", "security", "etc"],
+    "translation_approach": "How to best translate this to Myndra",
     "key_challenges": ["challenges", "in", "translation"]
 }}
 
-Focus on understanding the code's intent and how it could be idiomatically expressed in Pomegranate."""
+Focus on understanding the code's intent and how it could be idiomatically expressed in Myndra."""
     
     @staticmethod
     def analyze_project_context(analyses: List[Dict[str, Any]], user_prompt: str) -> str:
@@ -205,7 +205,7 @@ Focus on understanding the code's intent and how it could be idiomatically expre
             for analysis in analyses
         ])
         
-        return f"""You are an expert software architect analyzing a codebase for translation to Pomegranate.
+        return f"""You are an expert software architect analyzing a codebase for translation to Myndra.
 
 User Request: "{user_prompt}"
 
@@ -223,7 +223,7 @@ Based on this analysis, provide a comprehensive project assessment in JSON forma
     "main_technologies": ["key", "technologies", "used"],
     "core_functionality": "What the system does",
     "complexity_assessment": "overall complexity level",
-    "pomegranate_architecture": {{
+    "myndra_architecture": {{
         "recommended_style": "reactive|traditional|hybrid",
         "key_modules": ["module", "names"],
         "security_approach": "capability-based recommendations",
@@ -234,7 +234,7 @@ Based on this analysis, provide a comprehensive project assessment in JSON forma
         "priority_order": ["which", "files", "to", "translate", "first"],
         "template_type": "basic_app|reactive_ui|api_client|data_processor",
         "key_transformations": ["major", "changes", "needed"],
-        "pomegranate_features_to_use": ["reactive", "temporal", "security", "etc"]
+        "myndra_features_to_use": ["reactive", "temporal", "security", "etc"]
     }},
     "implementation_plan": [
         "Step 1: Description",
@@ -245,17 +245,17 @@ Based on this analysis, provide a comprehensive project assessment in JSON forma
     "recommendations": ["specific", "recommendations"]
 }}
 
-Consider how the user's prompt aligns with the codebase and suggest the best Pomegranate approach."""
+Consider how the user's prompt aligns with the codebase and suggest the best Myndra approach."""
     
     @staticmethod
-    def generate_pomegranate_code(
+    def generate_myndra_code(
         context: Dict[str, Any], 
         user_prompt: str, 
         template_type: str
     ) -> str:
-        """Generate prompt for creating Pomegranate code"""
+        """Generate prompt for creating Myndra code"""
         
-        return f"""You are an expert Pomegranate programmer. Generate idiomatic Pomegranate code based on the analysis.
+        return f"""You are an expert Myndra programmer. Generate idiomatic Myndra code based on the analysis.
 
 User Request: "{user_prompt}"
 
@@ -264,10 +264,10 @@ Context Analysis:
 
 Template Type: {template_type}
 
-Generate complete, working Pomegranate code that:
+Generate complete, working Myndra code that:
 
-1. Uses appropriate Pomegranate features for the domain
-2. Follows Pomegranate best practices and conventions
+1. Uses appropriate Myndra features for the domain
+2. Follows Myndra best practices and conventions
 3. Includes proper error handling with fallback strategies
 4. Uses semantic tags for organization
 5. Implements capability-based security where appropriate
@@ -275,7 +275,7 @@ Generate complete, working Pomegranate code that:
 7. Includes temporal types for any time-based functionality
 8. Uses appropriate execution models (@async, @parallel, etc.)
 
-Key Pomegranate Features to Consider:
+Key Myndra Features to Consider:
 - Context-aware features (dev/prod/test adaptation)
 - Live code capsules for modular components
 - Reactive programming with observables
@@ -285,7 +285,7 @@ Key Pomegranate Features to Consider:
 - Semantic navigation with #tag: annotations
 - Inline DSL blocks where appropriate
 
-Generate a complete, well-structured .pom file with:
+Generate a complete, well-structured .myn file with:
 - Proper imports with capabilities
 - Clear function and module organization
 - Comprehensive error handling
@@ -302,28 +302,28 @@ The code should be production-ready and demonstrate best practices for the speci
     ) -> str:
         """Generate prompt for refining generated code based on feedback"""
         
-        return f"""You are refining Pomegranate code based on user feedback and context.
+        return f"""You are refining Myndra code based on user feedback and context.
 
 Original Context:
 {json.dumps(original_context, indent=2)}
 
 Generated Code:
-```pomegranate
+```myndra
 {generated_code}
 ```
 
 User Feedback: "{user_feedback}"
 
-Please refine the code to address the feedback while maintaining Pomegranate best practices:
+Please refine the code to address the feedback while maintaining Myndra best practices:
 
 1. Address specific concerns raised in feedback
 2. Improve code quality and idiomaticity
-3. Ensure all Pomegranate features are used correctly
+3. Ensure all Myndra features are used correctly
 4. Maintain consistency with the original intent
 5. Add any missing error handling or edge cases
 6. Optimize for the specific use case
 
-Return only the refined Pomegranate code, properly formatted and complete."""
+Return only the refined Myndra code, properly formatted and complete."""
 
 
 async def test_ollama_connection():

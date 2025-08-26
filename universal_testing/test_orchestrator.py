@@ -117,9 +117,9 @@ class CoverageAnalyzer:
         
         # Coverage tool configurations for each language
         self.coverage_tools = {
-            "pomegranate": {
-                "tool": "pomeg",
-                "command": ["pomeg", "test", "--coverage"],
+            "myndra": {
+                "tool": "myndra",
+                "command": ["myndra", "test", "--coverage"],
                 "report_format": "json",
                 "report_file": "coverage.json"
             },
@@ -412,7 +412,7 @@ class TestReportGenerator:
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PomegranteMuse Test Report</title>
+    <title>MyndraComposer Test Report</title>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 20px; }}
         .header {{ background-color: #f0f0f0; padding: 20px; border-radius: 5px; }}
@@ -428,7 +428,7 @@ class TestReportGenerator:
 </head>
 <body>
     <div class="header">
-        <h1>🍎 PomegranteMuse Universal Test Report</h1>
+        <h1>🍎 MyndraComposer Universal Test Report</h1>
         <p>Generated: {execution_report.end_time.strftime('%Y-%m-%d %H:%M:%S')}</p>
         <p>Duration: {execution_report.total_duration:.2f} seconds</p>
     </div>
@@ -494,7 +494,7 @@ class TestReportGenerator:
         report_file = self.output_dir / "junit_report.xml"
         
         root = ET.Element("testsuites")
-        root.set("name", "PomegranteMuse Universal Tests")
+        root.set("name", "MyndraComposer Universal Tests")
         root.set("time", str(execution_report.total_duration))
         
         for build_result in execution_report.build_results:

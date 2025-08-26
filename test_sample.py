@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sample Python code for testing PomegranteMuse translation capabilities.
+Sample Python code for testing MyndraComposer translation capabilities.
 This represents a simple web API with mathematical calculations.
 """
 

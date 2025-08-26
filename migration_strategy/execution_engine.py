@@ -1,5 +1,5 @@
 """
-Migration Execution Engine for PomegranteMuse
+Migration Execution Engine for MyndraComposer
 Executes migration plans with task management and rollback capabilities
 """
 

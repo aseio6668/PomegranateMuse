@@ -1,5 +1,5 @@
 """
-Benchmarking Integration Module for PomegranteMuse
+Benchmarking Integration Module for MyndraComposer
 Integrates performance benchmarking with the main application
 """
 
@@ -12,7 +12,7 @@ from dataclasses import dataclass
 
 from .performance_analyzer import (
     PerformanceBenchmarker, BenchmarkConfig, BenchmarkResult,
-    benchmark_pomegranate_compilation, benchmark_full_translation_pipeline
+    benchmark_myndra_compilation, benchmark_full_translation_pipeline
 )
 
 
@@ -240,9 +240,9 @@ class BenchmarkIntegration:
         if (self.project_root / "CMakeLists.txt").exists():
             commands["cmake"] = ["cmake", "--build", "build"]
         
-        # Pomegranate build (if pomegranate.toml exists)
-        if (self.project_root / "pomegranate.toml").exists():
-            commands["pomegranate"] = ["pomegranate", "build", "--release"]
+        # Myndra build (if myndra.toml exists)
+        if (self.project_root / "myndra.toml").exists():
+            commands["myndra"] = ["myndra", "build", "--release"]
         
         return commands
     
@@ -259,8 +259,8 @@ class BenchmarkIntegration:
             raise FileNotFoundError(f"File not found: {file_path}")
         
         if benchmark_type == "compilation":
-            if file_path.suffix == ".pom":
-                return await benchmark_pomegranate_compilation(
+            if file_path.suffix == ".myn":
+                return await benchmark_myndra_compilation(
                     str(file_path), iterations
                 )
             else:
@@ -508,7 +508,7 @@ async def run_benchmark_interactive(project_root: str):
     """Interactive benchmark runner"""
     integration = BenchmarkIntegration(project_root)
     
-    print("🏃 PomegranteMuse Benchmarking System")
+    print("🏃 MyndraComposer Benchmarking System")
     print("=" * 50)
     
     # List available suites

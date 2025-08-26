@@ -1,5 +1,5 @@
 """
-Configuration Management System for PomegranteMuse
+Configuration Management System for MyndraComposer
 Provides centralized configuration management with environment-specific settings
 """
 

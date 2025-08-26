@@ -1,5 +1,5 @@
 """
-Python Language Plugin for PomegranteMuse
+Python Language Plugin for MyndraComposer
 Provides Python language support with AST parsing and analysis
 """
 

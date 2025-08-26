@@ -1,5 +1,5 @@
 """
-Communication Platform Integration for PomegranteMuse
+Communication Platform Integration for MyndraComposer
 Integrates with Slack, Microsoft Teams, email, and other communication platforms
 """
 
@@ -72,7 +72,7 @@ class EmailNotification:
     password: str = ""
     use_tls: bool = True
     from_email: str = ""
-    from_name: str = "PomegranteMuse"
+    from_name: str = "MyndraComposer"
 
 class CommunicationPlatform:
     """Base class for communication platform integrations"""
@@ -129,7 +129,7 @@ class SlackIntegration(CommunicationPlatform):
         """Send message via Slack webhook"""
         payload = {
             "text": message,
-            "username": kwargs.get("username", "PomegranteMuse"),
+            "username": kwargs.get("username", "MyndraComposer"),
             "icon_emoji": kwargs.get("emoji", ":robot_face:")
         }
         
@@ -179,8 +179,8 @@ class SlackIntegration(CommunicationPlatform):
             "title": title,
             "text": message,
             "timestamp": int(datetime.now().timestamp()),
-            "footer": "PomegranteMuse",
-            "footer_icon": "https://example.com/pomegrantemuse-icon.png"
+            "footer": "MyndraComposer",
+            "footer_icon": "https://example.com/myndra-icon.png"
         }
         
         # Add fields for structured data
@@ -286,7 +286,7 @@ class TeamsIntegration(CommunicationPlatform):
         try:
             payload = {
                 "text": message,
-                "title": kwargs.get("title", "PomegranteMuse Notification")
+                "title": kwargs.get("title", "MyndraComposer Notification")
             }
             
             if kwargs.get("color"):
@@ -315,8 +315,8 @@ class TeamsIntegration(CommunicationPlatform):
             "themeColor": template.color.replace("#", ""),
             "sections": [{
                 "activityTitle": title,
-                "activitySubtitle": "PomegranteMuse",
-                "activityImage": "https://example.com/pomegrantemuse-icon.png",
+                "activitySubtitle": "MyndraComposer",
+                "activityImage": "https://example.com/myndra-icon.png",
                 "text": message,
                 "facts": []
             }]

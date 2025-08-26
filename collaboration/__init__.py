@@ -1,5 +1,5 @@
 """
-Collaboration System for PomegranteMuse
+Collaboration System for MyndraComposer
 Provides comprehensive collaboration features including real-time communication,
 team management, role-based access control, and workflow automation
 """

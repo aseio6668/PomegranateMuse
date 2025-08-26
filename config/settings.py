@@ -1,5 +1,5 @@
 """
-Settings Management for PomegranteMuse
+Settings Management for MyndraComposer
 Provides structured settings classes and validation
 """
 
@@ -119,7 +119,7 @@ class ProjectSettings:
     name: str = ""
     description: str = ""
     source_language: str = ""
-    target_language: str = "pomegranate"
+    target_language: str = "myndra"
     migration_strategy: str = "incremental"
     
     # Project structure
@@ -267,12 +267,12 @@ class DefaultSettings:
                 quality_threshold=0.8,
                 complexity_limit=10
             ),
-            "pomegranate": LanguageSettings(
-                name="pomegranate",
+            "myndra": LanguageSettings(
+                name="myndra",
                 enabled=True,
-                file_extensions=[".pomeg", ".pom"],
-                build_command="pomeg build",
-                test_command="pomeg test",
+                file_extensions=[".myn"],
+                build_command="myndra build",
+                test_command="myndra test",
                 quality_threshold=0.9,
                 complexity_limit=8
             )
@@ -284,9 +284,9 @@ class DefaultSettings:
         return GlobalSettings(
             version="1.0.0",
             install_path=str(Path(__file__).parent.parent),
-            data_directory=str(Path.home() / ".pomegrantemuse"),
+            data_directory=str(Path.home() / ".myndra"),
             log_level="INFO",
-            log_file="pomegrantemuse.log",
+            log_file="myndra.log",
             update_check_enabled=True,
             telemetry_enabled=False,
             crash_reporting=True,
@@ -318,7 +318,7 @@ class DefaultSettings:
             name="Untitled Project",
             description="",
             source_language="python",
-            target_language="pomegranate",
+            target_language="myndra",
             migration_strategy="incremental",
             source_directories=["src", "lib"],
             output_directory="output",

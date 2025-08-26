@@ -1,5 +1,5 @@
 """
-Plugin Manager for PomegranteMuse
+Plugin Manager for MyndraComposer
 Handles loading, managing, and executing plugins
 """
 
@@ -171,12 +171,12 @@ class PluginManager:
         if self.config_manager:
             user_dir = Path(self.config_manager.config_dir) / "plugins"
         else:
-            user_dir = Path.home() / ".pomegrantemuse" / "plugins"
+            user_dir = Path.home() / ".myndra" / "plugins"
         user_dir.mkdir(parents=True, exist_ok=True)
         self.plugin_directories.append(user_dir)
         
         # System plugins
-        system_dir = Path("/usr/local/share/pomegrantemuse/plugins")
+        system_dir = Path("/usr/local/share/myndra/plugins")
         if system_dir.exists():
             self.plugin_directories.append(system_dir)
     

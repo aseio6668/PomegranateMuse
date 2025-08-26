@@ -1,5 +1,5 @@
 """
-Test Runner for PomegranteMuse
+Test Runner for MyndraComposer
 Orchestrates and executes all test suites with comprehensive reporting
 """
 
@@ -370,7 +370,7 @@ class TestRunner:
 <!DOCTYPE html>
 <html>
 <head>
-    <title>PomegranteMuse Test Results</title>
+    <title>MyndraComposer Test Results</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .summary { background: #f5f5f5; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
@@ -387,7 +387,7 @@ class TestRunner:
     </style>
 </head>
 <body>
-    <h1>PomegranteMuse Test Results</h1>
+    <h1>MyndraComposer Test Results</h1>
     <div class="summary">
         <h2>Summary</h2>
         <p><strong>Total Duration:</strong> {total_duration:.2f} seconds</p>

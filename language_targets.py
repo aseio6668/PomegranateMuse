@@ -12,7 +12,7 @@ import json
 
 class TargetLanguage(Enum):
     """Supported target languages for code generation"""
-    POMEGRANATE = "pomegranate"
+    MYNDRA = "myndra"
     RUST = "rust"
     GO = "go"
     TYPESCRIPT = "typescript"
@@ -206,9 +206,9 @@ class LanguageRegistry:
     def _initialize_languages(self):
         """Initialize supported languages with their features"""
         
-        # Pomegranate (original)
-        pomegranate_features = LanguageFeatures(
-            name="Pomegranate",
+        # Myndra (original)
+        myndra_features = LanguageFeatures(
+            name="Myndra",
             version="1.0",
             has_generics=True,
             has_async_await=True,
@@ -220,12 +220,12 @@ class LanguageRegistry:
             concurrency_model="reactive",
             has_channels=True,
             error_handling="fallback_strategies",
-            package_manager="pom",
-            package_file="pom.toml",
-            build_system="pom",
-            build_file="pom.toml"
+            package_manager="myndra",
+            package_file="myndra.toml",
+            build_system="myndra",
+            build_file="myndra.toml"
         )
-        self._features[TargetLanguage.POMEGRANATE] = pomegranate_features
+        self._features[TargetLanguage.MYNDRA] = myndra_features
         
         # Rust
         rust_features = LanguageFeatures(

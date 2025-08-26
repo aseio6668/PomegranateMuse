@@ -1,5 +1,5 @@
 """
-Migration Strategy System for PomegranteMuse
+Migration Strategy System for MyndraComposer
 Provides comprehensive migration planning, execution, and validation
 """
 

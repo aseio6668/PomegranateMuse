@@ -1,5 +1,5 @@
 """
-WebSocket Handler for PomegranteMuse Dashboard
+WebSocket Handler for MyndraComposer Dashboard
 Handles real-time communication and collaboration features
 """
 

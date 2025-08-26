@@ -1,5 +1,5 @@
 """
-CI/CD Integration Module for PomegranteMuse
+CI/CD Integration Module for MyndraComposer
 Integrates CI/CD pipeline generation with the main application
 """
 
@@ -69,7 +69,7 @@ class CICDIntegration:
             LanguageType.GO: ["go.mod", "main.go", "go.sum"],
             LanguageType.TYPESCRIPT: ["package.json", "tsconfig.json", "yarn.lock", "package-lock.json"],
             LanguageType.PYTHON: ["requirements.txt", "setup.py", "pyproject.toml", "__init__.py"],
-            LanguageType.POMEGRANATE: ["pomegranate.toml", "pom.config", "*.pom"]
+            LanguageType.MYNDRA: ["myndra.toml", "myndra.config", "*.myn"]
         }
         
         for language, indicators in language_indicators.items():
@@ -192,7 +192,7 @@ class CICDIntegration:
             "go": ["GOPROXY_TOKEN"],
             "typescript": ["NPM_TOKEN"],
             "python": ["PYPI_TOKEN"],
-            "pomegranate": ["POMEGRANATE_REGISTRY_TOKEN"]
+            "myndra": ["MYNDRA_REGISTRY_TOKEN"]
         }
         
         # Provider-specific secrets

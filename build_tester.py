@@ -1,6 +1,6 @@
 """
-Build testing and error analysis for generated Pomegranate code
-Integrates with the Pomegranate compiler to test generated code
+Build testing and error analysis for generated Myndra code
+Integrates with the Myndra compiler to test generated code
 """
 
 import asyncio
@@ -34,21 +34,21 @@ class ErrorAnalysis:
     severity: str = "error"  # error, warning, info
 
 
-class PomegranateBuilder:
-    """Interface to Pomegranate compiler for testing generated code"""
+class MyndraBuilder:
+    """Interface to Myndra compiler for testing generated code"""
     
-    def __init__(self, pomegranate_path: Optional[Path] = None):
-        # Try to find Pomegranate compiler
-        if pomegranate_path:
-            self.compiler_path = pomegranate_path
+    def __init__(self, myndra_path: Optional[Path] = None):
+        # Try to find Myndra compiler
+        if myndra_path:
+            self.compiler_path = myndra_path
         else:
             # Look for it in the parent directory structure
             current_dir = Path(__file__).parent
             possible_paths = [
-                current_dir.parent / "Pomegrante2[c]" / "build" / "pomegranate",
-                current_dir.parent / "Pomegrante2[c]" / "build" / "pomegranate.exe",
-                Path("pomegranate"),  # In PATH
-                Path("./pomegranate"),  # Local
+                current_dir.parent / "Myndra2[c]" / "build" / "myndra",
+                current_dir.parent / "Myndra2[c]" / "build" / "myndra.exe",
+                Path("myndra"),  # In PATH
+                Path("./myndra"),  # Local
             ]
             
             self.compiler_path = None
@@ -69,25 +69,25 @@ class PomegranateBuilder:
         except (subprocess.TimeoutExpired, subprocess.CalledProcessError, FileNotFoundError):
             return False
     
-    async def test_code(self, pomegranate_code: str, test_name: str = "generated") -> BuildResult:
-        """Test Pomegranate code by attempting to compile it"""
+    async def test_code(self, myndra_code: str, test_name: str = "generated") -> BuildResult:
+        """Test Myndra code by attempting to compile it"""
         if not self.compiler_path:
             return BuildResult(
                 success=False,
                 stdout="",
-                stderr="Pomegranate compiler not found",
+                stderr="Myndra compiler not found",
                 exit_code=-1,
                 build_time_ms=0,
                 error_analysis={
                     "error_type": "compiler_missing",
-                    "message": "Pomegranate compiler not available",
-                    "suggestion": "Build Pomegranate compiler or add to PATH"
+                    "message": "Myndra compiler not available",
+                    "suggestion": "Build Myndra compiler or add to PATH"
                 }
             )
         
         # Create temporary file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.pom', delete=False) as temp_file:
-            temp_file.write(pomegranate_code)
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.myn', delete=False) as temp_file:
+            temp_file.write(myndra_code)
             temp_file_path = Path(temp_file.name)
         
         try:
@@ -107,7 +107,7 @@ class PomegranateBuilder:
             # Analyze errors if compilation failed
             error_analysis = None
             if result.returncode != 0:
-                error_analysis = self._analyze_errors(result.stderr, pomegranate_code)
+                error_analysis = self._analyze_errors(result.stderr, myndra_code)
             
             return BuildResult(
                 success=result.returncode == 0,
@@ -141,7 +141,7 @@ class PomegranateBuilder:
                 error_analysis={
                     "error_type": "build_system_error",
                     "message": str(e),
-                    "suggestion": "Check Pomegranate installation and permissions"
+                    "suggestion": "Check Myndra installation and permissions"
                 }
             )
         finally:
@@ -244,7 +244,7 @@ class PomegranateBuilder:
 class CodeIterator:
     """Iteratively improves generated code based on build results"""
     
-    def __init__(self, builder: PomegranateBuilder, ollama_provider=None):
+    def __init__(self, builder: MyndraBuilder, ollama_provider=None):
         self.builder = builder
         self.ollama = ollama_provider
         self.max_iterations = 3
@@ -306,10 +306,10 @@ class CodeIterator:
         if not self.ollama:
             return code
         
-        fix_prompt = f"""Fix the following Pomegranate code compilation errors:
+        fix_prompt = f"""Fix the following Myndra code compilation errors:
 
 Original Code:
-```pomegranate
+```myndra
 {code}
 ```
 
@@ -320,7 +320,7 @@ Error Analysis:
 {json.dumps(build_result.error_analysis, indent=2)}
 
 Please fix the compilation errors while maintaining the original intent and functionality.
-Return only the corrected Pomegranate code, properly formatted."""
+Return only the corrected Myndra code, properly formatted."""
         
         try:
             # This would use the Ollama client to get fixes
@@ -331,13 +331,13 @@ Return only the corrected Pomegranate code, properly formatted."""
             return code
 
 
-# Integration with main PomegranteMuse
+# Integration with main MyndraComposer
 class BuildTestingIntegration:
-    """Integrates build testing into the main PomegranteMuse workflow"""
+    """Integrates build testing into the main MyndraComposer workflow"""
     
     def __init__(self, enable_testing: bool = True):
         self.enable_testing = enable_testing
-        self.builder = PomegranateBuilder() if enable_testing else None
+        self.builder = MyndraBuilder() if enable_testing else None
         self.iterator = CodeIterator(self.builder) if self.builder else None
     
     async def test_and_improve_generated_code(
@@ -356,7 +356,7 @@ class BuildTestingIntegration:
                 "success": None
             }
         
-        print("🔨 Testing generated Pomegranate code...")
+        print("🔨 Testing generated Myndra code...")
         
         # Set up iterator with ML provider
         if ollama_provider:
@@ -376,14 +376,14 @@ class BuildTestingIntegration:
 
 async def test_build_system():
     """Test the build system functionality"""
-    print("Testing PomegranteMuse build system...")
+    print("Testing MyndraComposer build system...")
     
     # Test with simple valid code
     valid_code = '''
 import std::io with capabilities("write")
 
 fn main() {
-    print("Hello, Pomegranate!")
+    print("Hello, Myndra!")
 }
 '''
     
@@ -397,7 +397,7 @@ fn main() {
 }
 '''
     
-    builder = PomegranateBuilder()
+    builder = MyndraBuilder()
     
     print("\n1. Testing valid code...")
     result1 = await builder.test_code(valid_code, "valid_test")

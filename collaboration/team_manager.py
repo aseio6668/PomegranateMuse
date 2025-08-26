@@ -1,5 +1,5 @@
 """
-Team Collaboration Manager for PomegranteMuse
+Team Collaboration Manager for MyndraComposer
 Provides comprehensive team management, role-based access control, and collaboration workflows
 """
 
@@ -290,7 +290,7 @@ class TeamManager:
         team = Team(
             team_id=str(uuid.uuid4())[:8],
             name=f"{self.project_root.name} Team",
-            description="PomegranteMuse development team",
+            description="MyndraComposer development team",
             created_at=datetime.now().isoformat(),
             owner_id=self.current_user_id
         )

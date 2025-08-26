@@ -158,7 +158,7 @@ class ConfigUnitTests(unittest.TestCase):
             },
             "languages": {
                 "supported_source": ["python", "javascript", "java"],
-                "default_target": "pomegranate"
+                "default_target": "myndra"
             }
         }
         
